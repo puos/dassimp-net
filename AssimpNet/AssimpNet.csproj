@@ -110,12 +110,8 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\libs\Assimp\Assimp32.dll">
-      <Link>Assimp32.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\libs\Assimp\Assimp64.dll">
-      <Link>Assimp64.dll</Link>
+    <Content Include="..\libs\Assimp\dAssimp.dll">
+      <Link>dAssimp.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="AssimpLicense.txt">
@@ -125,14 +121,5 @@
   <ItemGroup>
     <None Include="AssimpKey.snk" />
   </ItemGroup>
-  <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
-    <Exec Command="&quot;$(SolutionDir)AssimpNet.Interop.Generator\bin\$(Configuration)\AssimpNet.Interop.Generator.exe&quot; &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProjectDir)AssimpKey.snk&quot;" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
