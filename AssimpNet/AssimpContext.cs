@@ -41,10 +41,10 @@ namespace Assimp
         private ExportFormatDescription[] m_exportFormats;
         private String[] m_importFormats;
 
-        private float m_scale = 1.0f;
-        private float m_xAxisRotation = 0.0f;
-        private float m_yAxisRotation = 0.0f;
-        private float m_zAxisRotation = 0.0f;
+        private double m_scale = 1.0;
+        private double m_xAxisRotation = 0.0;
+        private double m_yAxisRotation = 0.0;
+        private double m_zAxisRotation = 0.0f;
         private bool m_buildMatrix = false;
         private Matrix4x4 m_scaleRot = Matrix4x4.Identity;
 
@@ -65,7 +65,7 @@ namespace Assimp
         /// Gets or sets the uniform scale for the model. This is multiplied
         /// with the existing root node's transform. This is only used during import.
         /// </summary>
-        public float Scale
+        public double Scale
         {
             get
             {
@@ -85,7 +85,7 @@ namespace Assimp
         /// Gets or sets the model's rotation about the X-Axis, in degrees. This is multiplied
         /// with the existing root node's transform. This is only used during import.
         /// </summary>
-        public float XAxisRotation
+        public double XAxisRotation
         {
             get
             {
@@ -105,7 +105,7 @@ namespace Assimp
         /// Gets or sets the model's rotation abut the Y-Axis, in degrees. This is multiplied
         /// with the existing root node's transform. This is only used during import.
         /// </summary>
-        public float YAxisRotation
+        public double YAxisRotation
         {
             get
             {
@@ -125,7 +125,7 @@ namespace Assimp
         /// Gets or sets the model's rotation about the Z-Axis, in degrees. This is multiplied
         /// with the existing root node's transform. This is only used during import.
         /// </summary>
-        public float ZAxisRotation
+        public double ZAxisRotation
         {
             get
             {

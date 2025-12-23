@@ -37,17 +37,17 @@ namespace Assimp
         /// <summary>
         /// Red component.
         /// </summary>
-        public float R;
+        public double R;
 
         /// <summary>
         /// Green component.
         /// </summary>
-        public float G;
+        public double G;
 
         /// <summary>
         /// Blue component.
         /// </summary>
-        public float B;
+        public double B;
 
         /// <summary>
         /// Gets or sets the component value at the specified zero-based index
@@ -56,7 +56,7 @@ namespace Assimp
         /// </summary>
         /// <param name="index">Zero-based index.</param>
         /// <returns>The component value</returns>
-        public float this[int index]
+        public double this[int index]
         {
             get
             {
@@ -95,7 +95,7 @@ namespace Assimp
         /// <param name="r">Red component</param>
         /// <param name="g">Green component</param>
         /// <param name="b">Blue component</param>
-        public Color3D(float r, float g, float b)
+        public Color3D(double r, double g, double b)
         {
             R = r;
             G = g;
@@ -107,7 +107,7 @@ namespace Assimp
         /// set to the same value.
         /// </summary>
         /// <param name="value">Value to set R, G, B components</param>
-        public Color3D(float value)
+        public Color3D(double value)
         {
             R = value;
             G = value;
@@ -120,10 +120,10 @@ namespace Assimp
         /// <returns>True if the color is black/nearly block, false otherwise.</returns>
         public bool IsBlack()
         {
-            float epsilon = 10e-3f;
-            return (float) Math.Abs(R) < epsilon
-                && (float) Math.Abs(G) < epsilon
-                && (float) Math.Abs(B) < epsilon;
+            double epsilon = 10e-3d;
+            return (double) Math.Abs(R) < epsilon
+                && (double) Math.Abs(G) < epsilon
+                && (double) Math.Abs(B) < epsilon;
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Assimp
         /// <param name="color">Source color</param>
         /// <param name="value">Value to add to each component</param>
         /// <returns>Added color</returns>
-        public static Color3D operator +(Color3D color, float value)
+        public static Color3D operator +(Color3D color, double value)
         {
             Color3D c;
             c.R = color.R + value;
@@ -162,7 +162,7 @@ namespace Assimp
         /// <param name="value">Value to add to each component</param>
         /// <param name="color">Source color</param>
         /// <returns>Added color</returns>
-        public static Color3D operator +(float value, Color3D color)
+        public static Color3D operator +(double value, Color3D color)
         {
             Color3D c;
             c.R = color.R + value;
@@ -192,7 +192,7 @@ namespace Assimp
         /// <param name="color">Source color</param>
         /// <param name="value">Value to subtract from each component</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator -(Color3D color, float value)
+        public static Color3D operator -(Color3D color, double value)
         {
             Color3D c;
             c.R = color.R - value;
@@ -208,7 +208,7 @@ namespace Assimp
         /// <param name="value">Value for each component of the first color</param>
         /// <param name="color">Second color</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator -(float value, Color3D color)
+        public static Color3D operator -(double value, Color3D color)
         {
             Color3D c;
             c.R = value - color.R;
@@ -238,7 +238,7 @@ namespace Assimp
         /// <param name="value">Source color</param>
         /// <param name="scale">Scalar value</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator *(Color3D value, float scale)
+        public static Color3D operator *(Color3D value, double scale)
         {
             Color3D c;
             c.R = value.R * scale;
@@ -253,7 +253,7 @@ namespace Assimp
         /// <param name="scale">Scalar value</param>
         /// <param name="value">Source color</param>
         /// <returns>Resulting color</returns>
-        public static Color3D operator *(float scale, Color3D value)
+        public static Color3D operator *(double scale, Color3D value)
         {
             Color3D c;
             c.R = value.R * scale;
@@ -285,7 +285,7 @@ namespace Assimp
         /// <returns>Resulting color</returns>
         public static Color3D operator /(Color3D color, float divisor)
         {
-            float invDivisor = 1.0f / divisor;
+            double invDivisor = 1.0 / divisor;
             Color3D c;
             c.R = color.R * invDivisor;
             c.G = color.G * invDivisor;

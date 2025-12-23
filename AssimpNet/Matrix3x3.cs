@@ -38,49 +38,51 @@ namespace Assimp
         /// <summary>
         /// Value at row 1, column 1 of the matrix
         /// </summary>
-        public float A1;
+        public double A1;
 
         /// <summary>
         /// Value at row 1, column 2 of the matrix
         /// </summary>
-        public float A2;
+        public double A2;
 
         /// <summary>
         /// Value at row 1, column 3 of the matrix
         /// </summary>
-        public float A3;
+        public double A3;
 
         /// <summary>
         /// Value at row 2, column 1 of the matrix
         /// </summary>
-        public float B1;
+        public double B1;
 
         /// <summary>
         /// Value at row 2, column 2 of the matrix
         /// </summary>
-        public float B2;
+        public double B2;
 
         /// <summary>
         /// Value at row 2, column 3 of the matrix
         /// </summary>
-        public float B3;
+        public double B3;
 
         /// <summary>
         /// Value at row 3, column 1 of the matrix
         /// </summary>
-        public float C1;
+        public double C1;
 
         /// <summary>
         /// Value at row 3, column 2 of the matrix
         /// </summary>
-        public float C2;
+        public double C2;
 
         /// <summary>
         /// Value at row 3, column 3 of the matrix
         /// </summary>
-        public float C3;
+        public double C3;
 
-        private static Matrix3x3 _identity = new Matrix3x3(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+        private static Matrix3x3 _identity = new Matrix3x3(1.0, 0.0, 0.0, 
+            0.0, 1.0, 0.0, 
+            0.0, 0.0, 1.0);
 
         /// <summary>
         /// Gets the identity matrix.
@@ -100,7 +102,7 @@ namespace Assimp
         {
             get
             {
-                float epsilon = 10e-3f;
+                double epsilon = 10e-3d;
 
                 return (A2 <= epsilon && A2 >= -epsilon &&
                 A3 <= epsilon && A3 >= -epsilon &&
@@ -108,9 +110,9 @@ namespace Assimp
                 B3 <= epsilon && B3 >= -epsilon &&
                 C1 <= epsilon && C1 >= -epsilon &&
                 C2 <= epsilon && C2 >= -epsilon &&
-                A1 <= 1.0f + epsilon && A1 >= 1.0f - epsilon &&
-                B2 <= 1.0f + epsilon && B2 >= 1.0f - epsilon &&
-                C3 <= 1.0f + epsilon && C3 >= 1.0f - epsilon);
+                A1 <= 1.0 + epsilon && A1 >= 1.0 - epsilon &&
+                B2 <= 1.0 + epsilon && B2 >= 1.0 - epsilon &&
+                C3 <= 1.0 + epsilon && C3 >= 1.0 - epsilon);
             }
         }
 
@@ -231,7 +233,9 @@ namespace Assimp
         /// <param name="c1">Element at row 3, column 1</param>
         /// <param name="c2">Element at row 3, column 2</param>
         /// <param name="c3">Element at row 3, column 3</param>
-        public Matrix3x3(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2, float c3)
+        public Matrix3x3(double a1, double a2, double a3,
+            double b1, double b2, double b3,
+            double c1, double c2, double c3)
         {
             this.A1 = a1;
             this.A2 = a2;
@@ -285,38 +289,38 @@ namespace Assimp
         /// </summary>
         public void Inverse()
         {
-            float det = Determinant();
-            if(det == 0.0f)
+            double det = Determinant();
+            if(det == 0.0)
             {
                 // Matrix not invertible. Setting all elements to NaN is not really
                 // correct in a mathematical sense but it is easy to debug for the
                 // programmer.
-                A1 = float.NaN;
-                A2 = float.NaN;
-                A3 = float.NaN;
+                A1 = double.NaN;
+                A2 = double.NaN;
+                A3 = double.NaN;
 
-                B1 = float.NaN;
-                B2 = float.NaN;
-                B3 = float.NaN;
+                B1 = double.NaN;
+                B2 = double.NaN;
+                B3 = double.NaN;
 
-                C1 = float.NaN;
-                C2 = float.NaN;
-                C3 = float.NaN;
+                C1 = double.NaN;
+                C2 = double.NaN;
+                C3 = double.NaN;
             }
 
-            float invDet = 1.0f / det;
+            double invDet = 1.0 / det;
 
-            float a1 = invDet * (B2 * C3 - B3 * C2);
-            float a2 = -invDet * (A2 * C3 - A3 * C2);
-            float a3 = invDet * (A2 * B3 - A3 * B2);
+            double a1 = invDet * (B2 * C3 - B3 * C2);
+            double a2 = -invDet * (A2 * C3 - A3 * C2);
+            double a3 = invDet * (A2 * B3 - A3 * B2);
 
-            float b1 = -invDet * (B1 * C3 - B3 * C1);
-            float b2 = invDet * (A1 * C3 - A3 * C1);
-            float b3 = -invDet * (A1 * B3 - A3 * B1);
+            double b1 = -invDet * (B1 * C3 - B3 * C1);
+            double b2 = invDet * (A1 * C3 - A3 * C1);
+            double b3 = -invDet * (A1 * B3 - A3 * B1);
 
-            float c1 = invDet * (B1 * C2 - B2 * C1);
-            float c2 = -invDet * (A1 * C2 - A2 * C1);
-            float c3 = invDet * (A1 * B2 - A2 * B1);
+            double c1 = invDet * (B1 * C2 - B2 * C1);
+            double c2 = -invDet * (A1 * C2 - A2 * C1);
+            double c3 = invDet * (A1 * B2 - A2 * B1);
 
             A1 = a1;
             A2 = a2;
@@ -347,17 +351,17 @@ namespace Assimp
         /// <param name="y">Rotation angle about the y-axis, in radians.</param>
         /// <param name="z">Rotation angle about the z-axis, in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromEulerAnglesXYZ(float x, float y, float z)
+        public static Matrix3x3 FromEulerAnglesXYZ(double x, double y, double z)
         {
-            float cr = (float) Math.Cos(x);
-            float sr = (float) Math.Sin(x);
-            float cp = (float) Math.Cos(y);
-            float sp = (float) Math.Sin(y);
-            float cy = (float) Math.Cos(z);
-            float sy = (float) Math.Sin(z);
+            double cr = (double) Math.Cos(x);
+            double sr = (double) Math.Sin(x);
+            double cp = (double) Math.Cos(y);
+            double sp = (double) Math.Sin(y);
+            double cy = (double) Math.Cos(z);
+            double sy = (double) Math.Sin(z);
 
-            float srsp = sr * sp;
-            float crsp = cr * sp;
+            double srsp = sr * sp;
+            double crsp = cr * sp;
 
             Matrix3x3 m;
             m.A1 = cp * cy;
@@ -390,7 +394,7 @@ namespace Assimp
         /// </summary>
         /// <param name="radians">Rotation angle in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromRotationX(float radians)
+        public static Matrix3x3 FromRotationX(double radians)
         {
             /*
                  |  1  0       0      |
@@ -398,8 +402,8 @@ namespace Assimp
                  |  0  sin(A)  cos(A) |	
             */
             Matrix3x3 m = Identity;
-            m.B2 = m.C3 = (float) Math.Cos(radians);
-            m.C2 = (float) Math.Sin(radians);
+            m.B2 = m.C3 = (double) Math.Cos(radians);
+            m.C2 = (double) Math.Sin(radians);
             m.B3 = -m.C2;
             return m;
         }
@@ -409,7 +413,7 @@ namespace Assimp
         /// </summary>
         /// <param name="radians">Rotation angle in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromRotationY(float radians)
+        public static Matrix3x3 FromRotationY(double radians)
         {
             /*
                  |  cos(A)  0   sin(A) |
@@ -417,8 +421,8 @@ namespace Assimp
                  | -sin(A)  0   cos(A) |
             */
             Matrix3x3 m = Identity;
-            m.A1 = m.C3 = (float) Math.Cos(radians);
-            m.A3 = (float) Math.Sin(radians);
+            m.A1 = m.C3 = (double) Math.Cos(radians);
+            m.A3 = (double) Math.Sin(radians);
             m.C1 = -m.A3;
             return m;
         }
@@ -428,7 +432,7 @@ namespace Assimp
         /// </summary>
         /// <param name="radians">Rotation angle in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromRotationZ(float radians)
+        public static Matrix3x3 FromRotationZ(double radians)
         {
             /*
                  |  cos(A)  -sin(A)   0 |
@@ -436,8 +440,8 @@ namespace Assimp
                  |  0        0        1 |
              */
             Matrix3x3 m = Identity;
-            m.A1 = m.B2 = (float) Math.Cos(radians);
-            m.B1 = (float) Math.Sin(radians);
+            m.A1 = m.B2 = (double) Math.Cos(radians);
+            m.B1 = (double) Math.Sin(radians);
             m.A2 = -m.B1;
             return m;
         }
@@ -448,34 +452,34 @@ namespace Assimp
         /// <param name="radians">Rotation angle, in radians</param>
         /// <param name="axis">Rotation axis, which should be a normalized vector.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromAngleAxis(float radians, Vector3D axis)
+        public static Matrix3x3 FromAngleAxis(double radians, Vector3D axis)
         {
-            float x = axis.X;
-            float y = axis.Y;
-            float z = axis.Z;
+            double x = axis.X;
+            double y = axis.Y;
+            double z = axis.Z;
 
-            float sin = (float) System.Math.Sin((double) radians);
-            float cos = (float) System.Math.Cos((double) radians);
+            double sin = (double) System.Math.Sin((double) radians);
+            double cos = (double) System.Math.Cos((double) radians);
 
-            float xx = x * x;
-            float yy = y * y;
-            float zz = z * z;
-            float xy = x * y;
-            float xz = x * z;
-            float yz = y * z;
+            double xx = x * x;
+            double yy = y * y;
+            double zz = z * z;
+            double xy = x * y;
+            double xz = x * z;
+            double yz = y * z;
 
             Matrix3x3 m;
-            m.A1 = xx + (cos * (1.0f - xx));
+            m.A1 = xx + (cos * (1.0 - xx));
             m.B1 = (xy - (cos * xy)) + (sin * z);
             m.C1 = (xz - (cos * xz)) - (sin * y);
 
             m.A2 = (xy - (cos * xy)) - (sin * z);
-            m.B2 = yy + (cos * (1.0f - yy));
+            m.B2 = yy + (cos * (1.0 - yy));
             m.C2 = (yz - (cos * yz)) + (sin * x);
 
             m.A3 = (xz - (cos * xz)) + (sin * y);
             m.B3 = (yz - (cos * yz)) - (sin * x);
-            m.C3 = zz + (cos * (1.0f - zz));
+            m.C3 = zz + (cos * (1.0 - zz));
 
             return m;
         }
@@ -526,30 +530,30 @@ namespace Assimp
                 {
                     if(x.X < x.Z)
                     {
-                        x.X = 1.0f;
-                        x.Y = 0.0f;
-                        x.Z = 0.0f;
+                        x.X = 1.0;
+                        x.Y = 0.0;
+                        x.Z = 0.0;
                     }
                     else
                     {
-                        x.X = 0.0f;
-                        x.Y = 0.0f;
-                        x.Z = 1.0f;
+                        x.X = 0.0;
+                        x.Y = 0.0;
+                        x.Z = 1.0;
                     }
                 }
                 else
                 {
                     if(x.Y < x.Z)
                     {
-                        x.X = 0.0f;
-                        x.Y = 1.0f;
-                        x.Z = 0.0f;
+                        x.X = 0.0;
+                        x.Y = 1.0;
+                        x.Z = 0.0;
                     }
                     else
                     {
-                        x.X = 0.0f;
-                        x.Y = 0.0f;
-                        x.Z = 1.0f;
+                        x.X = 0.0;
+                        x.Y = 0.0;
+                        x.Z = 1.0;
                     }
                 }
 
@@ -561,9 +565,9 @@ namespace Assimp
                 v.Y = x.Y - to.Y;
                 v.Z = x.Z - to.Z;
 
-                float c1 = 2.0f / Vector3D.Dot(u, u);
-                float c2 = 2.0f / Vector3D.Dot(v, v);
-                float c3 = c1 * c2 * Vector3D.Dot(u, v);
+                double c1 = 2.0 / Vector3D.Dot(u, u);
+                double c2 = 2.0 / Vector3D.Dot(v, v);
+                double c3 = c1 * c2 * Vector3D.Dot(u, v);
 
                 for(int i = 1; i < 4; i++)
                 {
@@ -573,7 +577,7 @@ namespace Assimp
                         //matrix indices are "one-based" always subtract by one to index those
                         m[i, j] = -c1 * u[i - 1] * u[j - 1] - c2 * v[i - 1] * v[j - 1] + c3 * v[i - 1] * u[j - 1];
                     }
-                    m[i, i] += 1.0f;
+                    m[i, i] += 1.0;
                 }
 
             }
@@ -583,12 +587,12 @@ namespace Assimp
                 Vector3D v = Vector3D.Cross(from, to);
 
                 //Hand optimized version (9 mults less) by Gottfried Chen
-                float h = 1.0f / (1.0f + e);
-                float hvx = h * v.X;
-                float hvz = h * v.Z;
-                float hvxy = hvx * v.Y;
-                float hvxz = hvx * v.Z;
-                float hvyz = hvz * v.Y;
+                double h = 1.0f / (1.0 + e);
+                double hvx = h * v.X;
+                double hvz = h * v.Z;
+                double hvxy = hvx * v.Y;
+                double hvxz = hvx * v.Z;
+                double hvyz = hvz * v.Y;
 
                 m.A1 = e + hvx * v.X;
                 m.A2 = hvxy - v.Z;

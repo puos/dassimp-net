@@ -36,12 +36,12 @@ namespace Assimp
         /// <summary>
         /// X component.
         /// </summary>
-        public float X;
+        public double X;
 
         /// <summary>
         /// Y component
         /// </summary>
-        public float Y;
+        public double Y;
 
         /// <summary>
         /// Gets or sets the component value at the specified zero-based index
@@ -50,7 +50,7 @@ namespace Assimp
         /// </summary>
         /// <param name="index">Zero-based index.</param>
         /// <returns>The component value</returns>
-        public float this[int index]
+        public double this[int index]
         {
             get
             {
@@ -83,7 +83,7 @@ namespace Assimp
         /// </summary>
         /// <param name="x">X component</param>
         /// <param name="y">Y component</param>
-        public Vector2D(float x, float y)
+        public Vector2D(double x, double y)
         {
             X = x;
             Y = y;
@@ -94,7 +94,7 @@ namespace Assimp
         /// set the same value.
         /// </summary>
         /// <param name="value">Value to set both X and Y to</param>
-        public Vector2D(float value)
+        public Vector2D(double value)
         {
             X = value;
             Y = value;
@@ -105,7 +105,7 @@ namespace Assimp
         /// </summary>
         /// <param name="x">X component</param>
         /// <param name="y">Y component</param>
-        public void Set(float x, float y)
+        public void Set(double x, double y)
         {
             X = x;
             Y = y;
@@ -115,16 +115,16 @@ namespace Assimp
         /// Calculates the length of the vector.
         /// </summary>
         /// <returns>Vector's length</returns>
-        public float Length()
+        public double Length()
         {
-            return (float) Math.Sqrt(LengthSquared());
+            return (double) Math.Sqrt(LengthSquared());
         }
 
         /// <summary>
         /// Calculates the length of the vector squared.
         /// </summary>
         /// <returns>Vector's length squared</returns>
-        public float LengthSquared()
+        public double LengthSquared()
         {
             return (X * X) + (Y * Y);
         }
@@ -135,7 +135,7 @@ namespace Assimp
         /// </summary>
         public void Normalize()
         {
-            float invLength = 1.0f / (float) System.Math.Sqrt((X * X) + (Y * Y));
+            double invLength = 1.0 / (double) System.Math.Sqrt((X * X) + (Y * Y));
             X *= invLength;
             Y *= invLength;
         }
@@ -197,7 +197,7 @@ namespace Assimp
         /// <param name="value">Source vector</param>
         /// <param name="scale">Scalar value</param>
         /// <returns>Scaled vector</returns>
-        public static Vector2D operator *(Vector2D value, float scale)
+        public static Vector2D operator *(Vector2D value, double scale)
         {
             Vector2D v;
             v.X = value.X * scale;
@@ -211,7 +211,7 @@ namespace Assimp
         /// <param name="scale">Scalar value</param>
         /// <param name="value">Source vector</param>
         /// <returns>Scaled vector</returns>
-        public static Vector2D operator *(float scale, Vector2D value)
+        public static Vector2D operator *(double scale, Vector2D value)
         {
             Vector2D v;
             v.X = value.X * scale;
@@ -241,7 +241,7 @@ namespace Assimp
         /// <returns>Divided vector</returns>
         public static Vector2D operator /(Vector2D value, float divisor)
         {
-            float invDivisor = 1.0f / divisor;
+            float invDivisor = 1.0 / divisor;
             Vector2D v;
             v.X = value.X * invDivisor;
             v.Y = value.Y * invDivisor;

@@ -36,22 +36,22 @@ namespace Assimp
         /// <summary>
         /// Rotation component of the quaternion/
         /// </summary>
-        public float W;
+        public double W;
 
         /// <summary>
         /// X component of the vector part of the quaternion.
         /// </summary>
-        public float X;
+        public double X;
 
         /// <summary>
         /// Y component of the vector part of the quaternion.
         /// </summary>
-        public float Y;
+        public double Y;
 
         /// <summary>
         /// Z component of the vector part of the quaternion.
         /// </summary>
-        public float Z;
+        public double Z;
 
         /// <summary>
         /// Constructs a new Quaternion.
@@ -60,7 +60,7 @@ namespace Assimp
         /// <param name="x">X component</param>
         /// <param name="y">Y component</param>
         /// <param name="z">Z component</param>
-        public Quaternion(float w, float x, float y, float z)
+        public Quaternion(double w, double x, double y, double z)
         {
             W = w;
             X = x;
@@ -74,39 +74,39 @@ namespace Assimp
         /// <param name="matrix">Rotation matrix to create the Quaternion from.</param>
         public Quaternion(Matrix3x3 matrix)
         {
-            float trace = matrix.A1 + matrix.B2 + matrix.C3;
+            double trace = matrix.A1 + matrix.B2 + matrix.C3;
 
             if(trace > 0)
             {
-                float s = (float) Math.Sqrt(trace + 1.0f) * 2.0f;
-                W = .25f * s;
+                double s = (double) Math.Sqrt(trace + 1.0) * 2.0;
+                W = 0.25 * s;
                 X = (matrix.C2 - matrix.B3) / s;
                 Y = (matrix.A3 - matrix.C1) / s;
                 Z = (matrix.B1 - matrix.A2) / s;
             }
             else if((matrix.A1 > matrix.B2) && (matrix.A1 > matrix.C3))
             {
-                float s = (float) Math.Sqrt(((1.0 + matrix.A1) - matrix.B2) - matrix.C3) * 2.0f;
+                double s = (double) Math.Sqrt(((1.0 + matrix.A1) - matrix.B2) - matrix.C3) * 2.0;
                 W = (matrix.C2 - matrix.B3) / s;
-                X = .25f * s;
+                X = 0.25 * s;
                 Y = (matrix.A2 + matrix.B1) / s;
                 Z = (matrix.A3 + matrix.C1) / s;
             }
             else if(matrix.B2 > matrix.C3)
             {
-                float s = (float) Math.Sqrt(((1.0f + matrix.B2) - matrix.A1) - matrix.C3) * 2.0f;
+                double s = (double) Math.Sqrt(((1.0f + matrix.B2) - matrix.A1) - matrix.C3) * 2.0f;
                 W = (matrix.A3 - matrix.C1) / s;
                 X = (matrix.A2 + matrix.B1) / s;
-                Y = .25f * s;
+                Y = 0.25 * s;
                 Z = (matrix.B3 + matrix.C2) / s;
             }
             else
             {
-                float s = (float) Math.Sqrt(((1.0f + matrix.C3) - matrix.A1) - matrix.B2) * 2.0f;
+                double s = (double) Math.Sqrt(((1.0f + matrix.C3) - matrix.A1) - matrix.B2) * 2.0f;
                 W = (matrix.B1 - matrix.A2) / s;
                 X = (matrix.A3 + matrix.C1) / s;
                 Y = (matrix.B3 + matrix.C2) / s;
-                Z = .25f * s;
+                Z = 0.25 * s;
             }
 
             Normalize();
@@ -118,16 +118,16 @@ namespace Assimp
         /// <param name="pitch">Pitch</param>
         /// <param name="yaw">Yaw</param>
         /// <param name="roll">Roll</param>
-        public Quaternion(float pitch, float yaw, float roll)
+        public Quaternion(double pitch, double yaw, double roll)
         {
-            float sinPitch = (float) Math.Sin(pitch * .5f);
-            float cosPitch = (float) Math.Cos(pitch * .5f);
-            float sinYaw = (float) Math.Sin(yaw * .5f);
-            float cosYaw = (float) Math.Cos(yaw * .5f);
-            float sinRoll = (float) Math.Sin(roll * .5f);
-            float cosRoll = (float) Math.Cos(roll * .5f);
-            float cosPitchCosYaw = cosPitch * cosYaw;
-            float sinPitchSinYaw = sinPitch * sinYaw;
+            double sinPitch = (double) Math.Sin(pitch * 0.5);
+            double cosPitch = (double) Math.Cos(pitch * 0.5);
+            double sinYaw = (double) Math.Sin(yaw * 0.5);
+            double cosYaw = (double) Math.Cos(yaw * 0.5);
+            double sinRoll = (double) Math.Sin(roll * 0.5);
+            double cosRoll = (double) Math.Cos(roll * 0.5);
+            double cosPitchCosYaw = cosPitch * cosYaw;
+            double sinPitchSinYaw = sinPitch * sinYaw;
 
             X = (sinRoll * cosPitchCosYaw) - (cosRoll * sinPitchSinYaw);
             Y = (cosRoll * sinPitch * cosYaw) + (sinRoll * cosPitch * sinYaw);
@@ -140,13 +140,13 @@ namespace Assimp
         /// </summary>
         /// <param name="axis">Axis</param>
         /// <param name="angle">Angle about the axis</param>
-        public Quaternion(Vector3D axis, float angle)
+        public Quaternion(Vector3D axis, double angle)
         {
             axis.Normalize();
 
-            float halfAngle = angle * .5f;
-            float sin = (float) Math.Sin(halfAngle);
-            float cos = (float) Math.Cos(halfAngle);
+            double halfAngle = angle * 0.5;
+            double sin = (double) Math.Sin(halfAngle);
+            double cos = (double) Math.Cos(halfAngle);
             X = axis.X * sin;
             Y = axis.Y * sin;
             Z = axis.Z * sin;
@@ -158,7 +158,7 @@ namespace Assimp
         /// </summary>
         public void Normalize()
         {
-            float mag = (X * X) + (Y * Y) + (Z * Z) + (W * W);
+            double mag = (X * X) + (Y * Y) + (Z * Z) + (W * W);
             if(mag != 0)
             {
                 X /= mag;
@@ -184,29 +184,29 @@ namespace Assimp
         /// <returns>Rotation matrix representing the quaternion.</returns>
         public Matrix3x3 GetMatrix()
         {
-            float xx = X * X;
-            float yy = Y * Y;
-            float zz = Z * Z;
+            double xx = X * X;
+            double yy = Y * Y;
+            double zz = Z * Z;
 
-            float xy = X * Y;
-            float zw = Z * W;
-            float zx = Z * X;
-            float yw = Y * W;
-            float yz = Y * Z;
-            float xw = X * W;
+            double xy = X * Y;
+            double zw = Z * W;
+            double zx = Z * X;
+            double yw = Y * W;
+            double yz = Y * Z;
+            double xw = X * W;
 
             Matrix3x3 mat;
-            mat.A1 = 1.0f - (2.0f * (yy + zz));
-            mat.B1 = 2.0f * (xy + zw);
-            mat.C1 = 2.0f * (zx - yw);
+            mat.A1 = 1.0 - (2.0 * (yy + zz));
+            mat.B1 = 2.0 * (xy + zw);
+            mat.C1 = 2.0 * (zx - yw);
 
-            mat.A2 = 2.0f * (xy - zw);
-            mat.B2 = 1.0f - (2.0f * (zz + xx));
-            mat.C2 = 2.0f * (yz + xw);
+            mat.A2 = 2.0 * (xy - zw);
+            mat.B2 = 1.0 - (2.0 * (zz + xx));
+            mat.C2 = 2.0 * (yz + xw);
 
-            mat.A3 = 2.0f * (zx + yw);
-            mat.B3 = 2.0f * (yz - xw);
-            mat.C3 = 1.0f - (2.0f * (yy + xx));
+            mat.A3 = 2.0 * (zx + yw);
+            mat.B3 = 2.0 * (yz - xw);
+            mat.C3 = 1.0 - (2.0 * (yy + xx));
 
             return mat;
         }
@@ -218,13 +218,13 @@ namespace Assimp
         /// <param name="end">End rotation when factor == 1</param>
         /// <param name="factor">Interpolation factor between 0 and 1, values beyond this range yield undefined values</param>
         /// <returns>Interpolated quaternion.</returns>
-        public static Quaternion Slerp(Quaternion start, Quaternion end, float factor)
+        public static Quaternion Slerp(Quaternion start, Quaternion end, double factor)
         {
             //Calc cosine theta
-            float cosom = (start.X * end.X) + (start.Y * end.Y) + (start.Z * end.Z) + (start.W * end.W);
+            double cosom = (start.X * end.X) + (start.Y * end.Y) + (start.Z * end.Z) + (start.W * end.W);
 
             //Reverse signs if needed
-            if(cosom < 0.0f)
+            if(cosom < 0.0)
             {
                 cosom = -cosom;
                 end.X = -end.X;
@@ -234,21 +234,21 @@ namespace Assimp
             }
 
             //calculate coefficients
-            float sclp, sclq;
+            double sclp, sclq;
             //0.0001 -> some episilon
-            if((1.0f - cosom) > 0.0001f)
+            if((1.0 - cosom) > 0.0001)
             {
                 //Do a slerp
-                float omega, sinom;
-                omega = (float) Math.Acos(cosom); //extract theta from the product's cos theta
-                sinom = (float) Math.Sin(omega);
-                sclp = (float) Math.Sin((1.0f - factor) * omega) / sinom;
-                sclq = (float) Math.Sin(factor * omega) / sinom;
+                double omega, sinom;
+                omega = (double) Math.Acos(cosom); //extract theta from the product's cos theta
+                sinom = (double) Math.Sin(omega);
+                sclp = (double) Math.Sin((1.0 - factor) * omega) / sinom;
+                sclq = (double) Math.Sin(factor * omega) / sinom;
             }
             else
             {
                 //Very close, do a lerp instead since its faster
-                sclp = 1.0f - factor;
+                sclp = 1.0 - factor;
                 sclq = factor;
             }
 
@@ -268,26 +268,26 @@ namespace Assimp
         /// <returns>Rotated point.</returns>
         public static Vector3D Rotate(Vector3D pt, Quaternion quat)
         {
-            float x2 = quat.X + quat.X;
-            float y2 = quat.Y + quat.Y;
-            float z2 = quat.Z + quat.Z;
+            double x2 = quat.X + quat.X;
+            double y2 = quat.Y + quat.Y;
+            double z2 = quat.Z + quat.Z;
 
-            float wx2 = quat.W * x2;
-            float wy2 = quat.W * y2;
-            float wz2 = quat.W * z2;
+            double wx2 = quat.W * x2;
+            double wy2 = quat.W * y2;
+            double wz2 = quat.W * z2;
 
-            float xx2 = quat.X * x2;
-            float xy2 = quat.X * y2;
-            float xz2 = quat.X * z2;
+            double xx2 = quat.X * x2;
+            double xy2 = quat.X * y2;
+            double xz2 = quat.X * z2;
 
-            float yy2 = quat.Y * y2;
-            float yz2 = quat.Y * z2;
+            double yy2 = quat.Y * y2;
+            double yz2 = quat.Y * z2;
 
-            float zz2 = quat.Z * z2;
+            double zz2 = quat.Z * z2;
 
-            float x = ((pt.X * ((1.0f - yy2) - zz2)) + (pt.Y * (xy2 - wz2))) + (pt.Z * (xz2 + wy2));
-            float y = ((pt.X * (xy2 + wz2)) + (pt.Y * ((1.0f - xx2) - zz2))) + (pt.Z * (yz2 - wx2));
-            float z = ((pt.X * (xz2 - wy2)) + (pt.Y * (yz2 + wx2))) + (pt.Z * ((1.0f - xx2) - yy2));
+            double x = ((pt.X * ((1.0 - yy2) - zz2)) + (pt.Y * (xy2 - wz2))) + (pt.Z * (xz2 + wy2));
+            double y = ((pt.X * (xy2 + wz2)) + (pt.Y * ((1.0 - xx2) - zz2))) + (pt.Z * (yz2 - wx2));
+            double z = ((pt.X * (xz2 - wy2)) + (pt.Y * (yz2 + wx2))) + (pt.Z * ((1.0 - xx2) - yy2));
 
             Vector3D v;
             v.X = x;

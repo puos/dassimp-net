@@ -36,17 +36,17 @@ namespace Assimp
         /// <summary>
         /// X component.
         /// </summary>
-        public float X;
+        public double X;
 
         /// <summary>
         /// Y component.
         /// </summary>
-        public float Y;
+        public double Y;
 
         /// <summary>
         /// Z component.
         /// </summary>
-        public float Z;
+        public double Z;
 
         /// <summary>
         /// Gets or sets the component value at the specified zero-based index
@@ -55,7 +55,7 @@ namespace Assimp
         /// </summary>
         /// <param name="index">Zero-based index.</param>
         /// <returns>The component value</returns>
-        public float this[int index]
+        public double this[int index]
         {
             get
             {
@@ -94,7 +94,7 @@ namespace Assimp
         /// <param name="x">X component</param>
         /// <param name="y">Y component</param>
         /// <param name="z">Z component</param>
-        public Vector3D(float x, float y, float z)
+        public Vector3D(double x, double y, double z)
         {
             X = x;
             Y = y;
@@ -106,7 +106,7 @@ namespace Assimp
         /// </summary>
         /// <param name="value">Vector2D containing the X, Y values</param>
         /// <param name="z">Z component</param>
-        public Vector3D(Vector2D value, float z)
+        public Vector3D(Vector2D value, double z)
         {
             X = value.X;
             Y = value.Y;
@@ -118,7 +118,7 @@ namespace Assimp
         /// to the same value.
         /// </summary>
         /// <param name="value">Value to set X, Y, and Z to</param>
-        public Vector3D(float value)
+        public Vector3D(double value)
         {
             X = value;
             Y = value;
@@ -131,7 +131,7 @@ namespace Assimp
         /// <param name="x">X component</param>
         /// <param name="y">Y component</param>
         /// <param name="z">Z component</param>
-        public void Set(float x, float y, float z)
+        public void Set(double x, double y, double z)
         {
             X = x;
             Y = y;
@@ -142,16 +142,16 @@ namespace Assimp
         /// Calculates the length of the vector.
         /// </summary>
         /// <returns>Vector's length</returns>
-        public float Length()
+        public double Length()
         {
-            return (float) Math.Sqrt(LengthSquared());
+            return (double) Math.Sqrt(LengthSquared());
         }
 
         /// <summary>
         /// Calculates the length of the vector squared.
         /// </summary>
         /// <returns>Vector's length squared</returns>
-        public float LengthSquared()
+        public double LengthSquared()
         {
             return (X * X) + (Y * Y) + (Z * Z);
         }
@@ -162,7 +162,7 @@ namespace Assimp
         /// </summary>
         public void Normalize()
         {
-            float invLength = 1.0f / (float) Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
+            double invLength = 1.0 / (double) Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
             X *= invLength;
             Y *= invLength;
             Z *= invLength;
@@ -199,7 +199,7 @@ namespace Assimp
         /// <param name="a">First vector</param>
         /// <param name="b">Second vector</param>
         /// <returns>Resulting vector</returns>
-        public static float Dot(Vector3D a, Vector3D b)
+        public static double Dot(Vector3D a, Vector3D b)
         {
             return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
         }
@@ -255,7 +255,7 @@ namespace Assimp
         /// <param name="value">Source vector</param>
         /// <param name="scale">Scalar value</param>
         /// <returns>Scaled vector</returns>
-        public static Vector3D operator *(Vector3D value, float scale)
+        public static Vector3D operator *(Vector3D value, double scale)
         {
             Vector3D v;
             v.X = value.X * scale;
@@ -270,7 +270,7 @@ namespace Assimp
         /// <param name="scale">Scalar value</param>
         /// <param name="value">Source vector</param>
         /// <returns>Scaled vector</returns>
-        public static Vector3D operator *(float scale, Vector3D value)
+        public static Vector3D operator *(double scale, Vector3D value)
         {
             Vector3D v;
             v.X = value.X * scale;
@@ -330,9 +330,9 @@ namespace Assimp
         /// <param name="value">Source vector</param>
         /// <param name="divisor">Divisor</param>
         /// <returns>Divided vector</returns>
-        public static Vector3D operator /(Vector3D value, float divisor)
+        public static Vector3D operator /(Vector3D value, double divisor)
         {
-            float invDivisor = 1.0f / divisor;
+            double invDivisor = 1.0 / divisor;
             Vector3D v;
             v.X = value.X * invDivisor;
             v.Y = value.Y * invDivisor;

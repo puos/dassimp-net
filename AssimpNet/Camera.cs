@@ -38,10 +38,10 @@ namespace Assimp
         private Vector3D m_position;
         private Vector3D m_up;
         private Vector3D m_direction;
-        private float m_fieldOfView;
-        private float m_clipPlaneNear;
-        private float m_clipPlaneFar;
-        private float m_aspectRatio;
+        private double m_fieldOfView;
+        private double m_clipPlaneNear;
+        private double m_clipPlaneFar;
+        private double m_aspectRatio;
 
         /// <summary>
         /// Gets or sets the name of the camera. This corresponds to a node in the
@@ -114,7 +114,7 @@ namespace Assimp
         /// the angle between the center line of the screen and the left or right border. The default
         /// value is 1/4PI.
         /// </summary>
-        public float FieldOfview
+        public double FieldOfview
         {
             get
             {
@@ -130,7 +130,7 @@ namespace Assimp
         /// Gets or sets the distance of the near clipping plane from the camera. The value may not
         /// be 0.0f for arithmetic reasons to prevent a division through zero. The default value is 0.1f;
         /// </summary>
-        public float ClipPlaneNear
+        public double ClipPlaneNear
         {
             get
             {
@@ -148,7 +148,7 @@ namespace Assimp
         /// the near and far plane should not be too large (between 1000 - 10000 should be ok) to avoid
         /// floating-point inaccuracies which can lead to z-fighting.
         /// </summary>
-        public float ClipPlaneFar
+        public double ClipPlaneFar
         {
             get
             {
@@ -165,7 +165,7 @@ namespace Assimp
         /// values are 4/3, 1/2, or 1/1. This value is 0 if the aspect ratio is not defined in the source file.
         /// The default value is zero.
         /// </summary>
-        public float AspectRatio
+        public double AspectRatio
         {
             get
             {
@@ -212,7 +212,7 @@ namespace Assimp
                 mat.D1 = -(Vector3D.Dot(xAxis, m_position));
                 mat.D2 = -(Vector3D.Dot(yAxis, m_position));
                 mat.D3 = -(Vector3D.Dot(zAxis, m_position));
-                mat.D4 = 1.0f;
+                mat.D4 = 1.0;
 
                 return mat;
             }

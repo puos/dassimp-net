@@ -259,21 +259,21 @@ namespace Assimp.Test
         [Test]
         public void TestOpTransformBy4x4()
         {
-            float m11 = 2, m12 = .2f, m13 = 0, m14 = 0;
-            float m21 = .2f, m22 = 2, m23 = 0, m24 = 0;
-            float m31 = 0, m32 = 0, m33 = 2, m34 = 0;
-            float m41 = 2, m42 = 3, m43 = 5, m44 = 1;
+            double m11 = 2, m12 = .2f, m13 = 0, m14 = 0;
+            double m21 = .2f, m22 = 2, m23 = 0, m24 = 0;
+            double m31 = 0, m32 = 0, m33 = 2, m34 = 0;
+            double m41 = 2, m42 = 3, m43 = 5, m44 = 1;
 
-            float x1 = 2, y1 = 2.5f, z1 = 52;
+            double x1 = 2, y1 = 2.5f, z1 = 52;
 
             Matrix4x4 m = new Matrix4x4(m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44);
             Vector3D v = new Vector3D(x1, y1, z1);
 
             Vector3D transformedV = m * v;
 
-            float x = (x1 * m11) + (y1 * m12) + (z1 * m13) + m14;
-            float y = (x1 * m21) + (y1 * m22) + (z1 * m23) + m24;
-            float z = (x1 * m31) + (y1 * m32) + (z1 * m33) + m34;
+            double x = (x1 * m11) + (y1 * m12) + (z1 * m13) + m14;
+            double y = (x1 * m21) + (y1 * m22) + (z1 * m23) + m24;
+            double z = (x1 * m31) + (y1 * m32) + (z1 * m33) + m34;
 
             TestHelper.AssertEquals(x, y, z, transformedV, "Testing vector transform by Matrix 4x4");
         }

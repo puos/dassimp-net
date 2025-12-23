@@ -37,84 +37,87 @@ namespace Assimp
         /// <summary>
         /// Value at row 1, column 1 of the matrix
         /// </summary>
-        public float A1;
+        public double A1;
 
         /// <summary>
         /// Value at row 1, column 2 of the matrix
         /// </summary>
-        public float A2;
+        public double A2;
 
         /// <summary>
         /// Value at row 1, column 3 of the matrix
         /// </summary>
-        public float A3;
+        public double A3;
 
         /// <summary>
         /// Value at row 1, column 4 of the matrix
         /// </summary>
-        public float A4;
+        public double A4;
 
         /// <summary>
         /// Value at row 2, column 1 of the matrix
         /// </summary>
-        public float B1;
+        public double B1;
 
         /// <summary>
         /// Value at row 2, column 2 of the matrix
         /// </summary>
-        public float B2;
+        public double B2;
 
         /// <summary>
         /// Value at row 2, column 3 of the matrix
         /// </summary>
-        public float B3;
+        public double B3;
 
         /// <summary>
         /// Value at row 2, column 4 of the matrix
         /// </summary>
-        public float B4;
+        public double B4;
 
         /// <summary>
         /// Value at row 3, column 1 of the matrix
         /// </summary>
-        public float C1;
+        public double C1;
 
         /// <summary>
         /// Value at row 3, column 2 of the matrix
         /// </summary>
-        public float C2;
+        public double C2;
 
         /// <summary>
         /// Value at row 3, column 3 of the matrix
         /// </summary>
-        public float C3;
+        public double C3;
 
         /// <summary>
         /// Value at row 3, column 4 of the matrix
         /// </summary>
-        public float C4;
+        public double C4;
 
         /// <summary>
         /// Value at row 4, column 1 of the matrix
         /// </summary>
-        public float D1;
+        public double D1;
 
         /// <summary>
         /// Value at row 4, column 2 of the matrix
         /// </summary>
-        public float D2;
+        public double D2;
 
         /// <summary>
         /// Value at row 4, column 3 of the matrix
         /// </summary>
-        public float D3;
+        public double D3;
 
         /// <summary>
         /// Value at row 4, column 4 of the matrix
         /// </summary>
-        public float D4;
+        public double D4;
 
-        private static Matrix4x4 _identity = new Matrix4x4(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+        private static Matrix4x4 _identity = new Matrix4x4(1.0, 0.0, 0.0, 0.0, 
+                                                           0.0, 1.0, 0.0, 0.0,
+                                                           0.0, 0.0, 1.0, 0.0,
+                                                           0.0, 0.0, 0.0, 1.0);
 
         /// <summary>
         /// Gets the identity matrix.
@@ -134,7 +137,7 @@ namespace Assimp
         {
             get
             {
-                float epsilon = 10e-3f;
+                double epsilon = 10e-3d;
 
                 return (A2 <= epsilon && A2 >= -epsilon &&
                 A3 <= epsilon && A3 >= -epsilon &&
@@ -148,10 +151,10 @@ namespace Assimp
                 D1 <= epsilon && D1 >= -epsilon &&
                 D2 <= epsilon && D2 >= -epsilon &&
                 D3 <= epsilon && D3 >= -epsilon &&
-                A1 <= 1.0f + epsilon && A1 >= 1.0f - epsilon &&
-                B2 <= 1.0f + epsilon && B2 >= 1.0f - epsilon &&
-                C3 <= 1.0f + epsilon && C3 >= 1.0f - epsilon &&
-                D4 <= 1.0f + epsilon && D4 >= 1.0f - epsilon);
+                A1 <= 1.0 + epsilon && A1 >= 1.0 - epsilon &&
+                B2 <= 1.0 + epsilon && B2 >= 1.0 - epsilon &&
+                C3 <= 1.0 + epsilon && C3 >= 1.0 - epsilon &&
+                D4 <= 1.0 + epsilon && D4 >= 1.0 - epsilon);
             }
         }
 
@@ -325,8 +328,10 @@ namespace Assimp
         /// <param name="d2">Element at row 4, column 2</param>
         /// <param name="d3">Element at row 4, column 3</param>
         /// <param name="d4">Element at row 4, column 4</param>
-        public Matrix4x4(float a1, float a2, float a3, float a4, float b1, float b2, float b3, float b4,
-            float c1, float c2, float c3, float c4, float d1, float d2, float d3, float d4)
+        public Matrix4x4(double a1, double a2, double a3, double a4,
+            double b1, double b2, double b3, double b4,
+            double c1, double c2, double c3, double c4,
+            double d1, double d2, double d3, double d4)
         {
             this.A1 = a1;
             this.A2 = a2;
@@ -411,54 +416,54 @@ namespace Assimp
         /// </summary>
         public void Inverse()
         {
-            float det = Determinant();
-            if(det == 0.0f)
+            double det = Determinant();
+            if(det == 0.0)
             {
                 // Matrix not invertible. Setting all elements to NaN is not really
                 // correct in a mathematical sense but it is easy to debug for the
                 // programmer.
-                A1 = float.NaN;
-                A2 = float.NaN;
-                A3 = float.NaN;
-                A4 = float.NaN;
+                A1 = double.NaN;
+                A2 = double.NaN;
+                A3 = double.NaN;
+                A4 = double.NaN;
 
-                B1 = float.NaN;
-                B2 = float.NaN;
-                B3 = float.NaN;
-                B4 = float.NaN;
+                B1 = double.NaN;
+                B2 = double.NaN;
+                B3 = double.NaN;
+                B4 = double.NaN;
 
-                C1 = float.NaN;
-                C2 = float.NaN;
-                C3 = float.NaN;
-                C4 = float.NaN;
+                C1 = double.NaN;
+                C2 = double.NaN;
+                C3 = double.NaN;
+                C4 = double.NaN;
 
-                D1 = float.NaN;
-                D2 = float.NaN;
-                D3 = float.NaN;
-                D4 = float.NaN;
+                D1 = double.NaN;
+                D2 = double.NaN;
+                D3 = double.NaN;
+                D4 = double.NaN;
             }
 
-            float invDet = 1.0f / det;
+            double invDet = 1.0 / det;
 
-            float a1 = invDet * (B2 * (C3 * D4 - C4 * D3) + B3 * (C4 * D2 - C2 * D4) + B4 * (C2 * D3 - C3 * D2));
-            float a2 = -invDet * (A2 * (C3 * D4 - C4 * D3) + A3 * (C4 * D2 - C2 * D4) + A4 * (C2 * D3 - C3 * D2));
-            float a3 = invDet * (A2 * (B3 * D4 - B4 * D3) + A3 * (B4 * D2 - B2 * D4) + A4 * (B2 * D3 - B3 * D2));
-            float a4 = -invDet * (A2 * (B3 * C4 - B4 * C3) + A3 * (B4 * C2 - B2 * C4) + A4 * (B2 * C3 - B3 * C2));
+            double a1 = invDet * (B2 * (C3 * D4 - C4 * D3) + B3 * (C4 * D2 - C2 * D4) + B4 * (C2 * D3 - C3 * D2));
+            double a2 = -invDet * (A2 * (C3 * D4 - C4 * D3) + A3 * (C4 * D2 - C2 * D4) + A4 * (C2 * D3 - C3 * D2));
+            double a3 = invDet * (A2 * (B3 * D4 - B4 * D3) + A3 * (B4 * D2 - B2 * D4) + A4 * (B2 * D3 - B3 * D2));
+            double a4 = -invDet * (A2 * (B3 * C4 - B4 * C3) + A3 * (B4 * C2 - B2 * C4) + A4 * (B2 * C3 - B3 * C2));
 
-            float b1 = -invDet * (B1 * (C3 * D4 - C4 * D3) + B3 * (C4 * D1 - C1 * D4) + B4 * (C1 * D3 - C3 * D1));
-            float b2 = invDet * (A1 * (C3 * D4 - C4 * D3) + A3 * (C4 * D1 - C1 * D4) + A4 * (C1 * D3 - C3 * D1));
-            float b3 = -invDet * (A1 * (B3 * D4 - B4 * D3) + A3 * (B4 * D1 - B1 * D4) + A4 * (B1 * D3 - B3 * D1));
-            float b4 = invDet * (A1 * (B3 * C4 - B4 * C3) + A3 * (B4 * C1 - B1 * C4) + A4 * (B1 * C3 - B3 * C1));
+            double b1 = -invDet * (B1 * (C3 * D4 - C4 * D3) + B3 * (C4 * D1 - C1 * D4) + B4 * (C1 * D3 - C3 * D1));
+            double b2 = invDet * (A1 * (C3 * D4 - C4 * D3) + A3 * (C4 * D1 - C1 * D4) + A4 * (C1 * D3 - C3 * D1));
+            double b3 = -invDet * (A1 * (B3 * D4 - B4 * D3) + A3 * (B4 * D1 - B1 * D4) + A4 * (B1 * D3 - B3 * D1));
+            double b4 = invDet * (A1 * (B3 * C4 - B4 * C3) + A3 * (B4 * C1 - B1 * C4) + A4 * (B1 * C3 - B3 * C1));
 
-            float c1 = invDet * (B1 * (C2 * D4 - C4 * D2) + B2 * (C4 * D1 - C1 * D4) + B4 * (C1 * D2 - C2 * D1));
-            float c2 = -invDet * (A1 * (C2 * D4 - C4 * D2) + A2 * (C4 * D1 - C1 * D4) + A4 * (C1 * D2 - C2 * D1));
-            float c3 = invDet * (A1 * (B2 * D4 - B4 * D2) + A2 * (B4 * D1 - B1 * D4) + A4 * (B1 * D2 - B2 * D1));
-            float c4 = -invDet * (A1 * (B2 * C4 - B4 * C2) + A2 * (B4 * C1 - B1 * C4) + A4 * (B1 * C2 - B2 * C1));
+            double c1 = invDet * (B1 * (C2 * D4 - C4 * D2) + B2 * (C4 * D1 - C1 * D4) + B4 * (C1 * D2 - C2 * D1));
+            double c2 = -invDet * (A1 * (C2 * D4 - C4 * D2) + A2 * (C4 * D1 - C1 * D4) + A4 * (C1 * D2 - C2 * D1));
+            double c3 = invDet * (A1 * (B2 * D4 - B4 * D2) + A2 * (B4 * D1 - B1 * D4) + A4 * (B1 * D2 - B2 * D1));
+            double c4 = -invDet * (A1 * (B2 * C4 - B4 * C2) + A2 * (B4 * C1 - B1 * C4) + A4 * (B1 * C2 - B2 * C1));
 
-            float d1 = -invDet * (B1 * (C2 * D3 - C3 * D2) + B2 * (C3 * D1 - C1 * D3) + B3 * (C1 * D2 - C2 * D1));
-            float d2 = invDet * (A1 * (C2 * D3 - C3 * D2) + A2 * (C3 * D1 - C1 * D3) + A3 * (C1 * D2 - C2 * D1));
-            float d3 = -invDet * (A1 * (B2 * D3 - B3 * D2) + A2 * (B3 * D1 - B1 * D3) + A3 * (B1 * D2 - B2 * D1));
-            float d4 = invDet * (A1 * (B2 * C3 - B3 * C2) + A2 * (B3 * C1 - B1 * C3) + A3 * (B1 * C2 - B2 * C1));
+            double d1 = -invDet * (B1 * (C2 * D3 - C3 * D2) + B2 * (C3 * D1 - C1 * D3) + B3 * (C1 * D2 - C2 * D1));
+            double d2 = invDet * (A1 * (C2 * D3 - C3 * D2) + A2 * (C3 * D1 - C1 * D3) + A3 * (C1 * D2 - C2 * D1));
+            double d3 = -invDet * (A1 * (B2 * D3 - B3 * D2) + A2 * (B3 * D1 - B1 * D3) + A3 * (B1 * D2 - B2 * D1));
+            double d4 = invDet * (A1 * (B2 * C3 - B3 * C2) + A2 * (B3 * C1 - B1 * C3) + A3 * (B1 * C2 - B2 * C1));
 
             A1 = a1;
             A2 = a2;
@@ -485,7 +490,7 @@ namespace Assimp
         /// Compute the determinant of this matrix.
         /// </summary>
         /// <returns>The determinant</returns>
-        public float Determinant()
+        public double Determinant()
         {
             return A1 * B2 * C3 * D4 - A1 * B2 * C4 * D3 + A1 * B3 * C4 * D2 - A1 * B3 * C2 * D4
                 + A1 * B4 * C2 * D3 - A1 * B4 * C3 * D2 - A2 * B3 * C4 * D1 + A2 * B3 * C1 * D4
@@ -578,38 +583,38 @@ namespace Assimp
         /// <param name="y">Rotation angle about the y-axis, in radians.</param>
         /// <param name="z">Rotation angle about the z-axis, in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix4x4 FromEulerAnglesXYZ(float x, float y, float z)
+        public static Matrix4x4 FromEulerAnglesXYZ(double x, double y, double z)
         {
-            float cr = (float) Math.Cos(x);
-            float sr = (float) Math.Sin(x);
-            float cp = (float) Math.Cos(y);
-            float sp = (float) Math.Sin(y);
-            float cy = (float) Math.Cos(z);
-            float sy = (float) Math.Sin(z);
+            double cr = (double) Math.Cos(x);
+            double sr = (double) Math.Sin(x);
+            double cp = (double) Math.Cos(y);
+            double sp = (double) Math.Sin(y);
+            double cy = (double) Math.Cos(z);
+            double sy = (double) Math.Sin(z);
 
-            float srsp = sr * sp;
-            float crsp = cr * sp;
+            double srsp = sr * sp;
+            double crsp = cr * sp;
 
             Matrix4x4 m;
             m.A1 = cp * cy;
             m.A2 = cp * sy;
             m.A3 = -sp;
-            m.A4 = 0.0f;
+            m.A4 = 0.0;
 
             m.B1 = srsp * cy - cr * sy;
             m.B2 = srsp * sy + cr * cy;
             m.B3 = sr * cp;
-            m.B4 = 0.0f;
+            m.B4 = 0.0;
 
             m.C1 = crsp * cy + sr * sy;
             m.C2 = crsp * sy - sr * cy;
             m.C3 = cr * cp;
-            m.C4 = 0.0f;
+            m.C4 = 0.0;
 
-            m.D1 = 0.0f;
-            m.D2 = 0.0f;
-            m.D3 = 0.0f;
-            m.D4 = 1.0f;
+            m.D1 = 0.0;
+            m.D2 = 0.0;
+            m.D3 = 0.0;
+            m.D4 = 1.0;
 
             return m;
         }
@@ -638,8 +643,8 @@ namespace Assimp
                  |  0  0       0       1 |	
             */
             Matrix4x4 m = Identity;
-            m.B2 = m.C3 = (float) Math.Cos(radians);
-            m.C2 = (float) Math.Sin(radians);
+            m.B2 = m.C3 = (double) Math.Cos(radians);
+            m.C2 = (double) Math.Sin(radians);
             m.B3 = -m.C2;
             return m;
         }
@@ -649,7 +654,7 @@ namespace Assimp
         /// </summary>
         /// <param name="radians">Rotation angle in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix4x4 FromRotationY(float radians)
+        public static Matrix4x4 FromRotationY(double radians)
         {
             /*
                  |  cos(A)  0   sin(A)  0 |
@@ -658,8 +663,8 @@ namespace Assimp
                  |  0       0   0       1 |
             */
             Matrix4x4 m = Identity;
-            m.A1 = m.C3 = (float) Math.Cos(radians);
-            m.A3 = (float) Math.Sin(radians);
+            m.A1 = m.C3 = (double) Math.Cos(radians);
+            m.A3 = (double) Math.Sin(radians);
             m.C1 = -m.A3;
             return m;
         }
@@ -669,7 +674,7 @@ namespace Assimp
         /// </summary>
         /// <param name="radians">Rotation angle in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix4x4 FromRotationZ(float radians)
+        public static Matrix4x4 FromRotationZ(double radians)
         {
             /*
                  |  cos(A)  -sin(A)   0   0 |
@@ -678,8 +683,8 @@ namespace Assimp
                  |  0        0        0   1 |	
              */
             Matrix4x4 m = Identity;
-            m.A1 = m.B2 = (float) Math.Cos(radians);
-            m.B1 = (float) Math.Sin(radians);
+            m.A1 = m.B2 = (double) Math.Cos(radians);
+            m.B1 = (double) Math.Sin(radians);
             m.A2 = -m.B1;
             return m;
         }
@@ -690,42 +695,42 @@ namespace Assimp
         /// <param name="radians">Rotation angle, in radians</param>
         /// <param name="axis">Rotation axis, which should be a normalized vector.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix4x4 FromAngleAxis(float radians, Vector3D axis)
+        public static Matrix4x4 FromAngleAxis(double radians, Vector3D axis)
         {
-            float x = axis.X;
-            float y = axis.Y;
-            float z = axis.Z;
+            double x = axis.X;
+            double y = axis.Y;
+            double z = axis.Z;
 
-            float sin = (float) System.Math.Sin((double) radians);
-            float cos = (float) System.Math.Cos((double) radians);
+            double sin = (double) System.Math.Sin((double) radians);
+            double cos = (double) System.Math.Cos((double) radians);
 
-            float xx = x * x;
-            float yy = y * y;
-            float zz = z * z;
-            float xy = x * y;
-            float xz = x * z;
-            float yz = y * z;
+            double xx = x * x;
+            double yy = y * y;
+            double zz = z * z;
+            double xy = x * y;
+            double xz = x * z;
+            double yz = y * z;
 
             Matrix4x4 m;
-            m.A1 = xx + (cos * (1.0f - xx));
+            m.A1 = xx + (cos * (1.0 - xx));
             m.B1 = (xy - (cos * xy)) + (sin * z);
             m.C1 = (xz - (cos * xz)) - (sin * y);
-            m.D1 = 0.0f;
+            m.D1 = 0.0;
 
             m.A2 = (xy - (cos * xy)) - (sin * z);
-            m.B2 = yy + (cos * (1.0f - yy));
+            m.B2 = yy + (cos * (1.0 - yy));
             m.C2 = (yz - (cos * yz)) + (sin * x);
-            m.D2 = 0.0f;
+            m.D2 = 0.0;
 
             m.A3 = (xz - (cos * xz)) + (sin * y);
             m.B3 = (yz - (cos * yz)) - (sin * x);
-            m.C3 = zz + (cos * (1.0f - zz));
-            m.D3 = 0.0f;
+            m.C3 = zz + (cos * (1.0 - zz));
+            m.D3 = 0.0;
 
-            m.A4 = 0.0f;
-            m.B4 = 0.0f;
-            m.C4 = 0.0f;
-            m.D4 = 1.0f;
+            m.A4 = 0.0;
+            m.B4 = 0.0;
+            m.C4 = 0.0;
+            m.D4 = 1.0;
 
             return m;
         }
@@ -843,22 +848,22 @@ namespace Assimp
             m.A1 = mat.A1;
             m.A2 = mat.A2;
             m.A3 = mat.A3;
-            m.A4 = 0.0f;
+            m.A4 = 0.0;
 
             m.B1 = mat.B1;
             m.B2 = mat.B2;
             m.B3 = mat.B3;
-            m.B4 = 0.0f;
+            m.B4 = 0.0;
 
             m.C1 = mat.C1;
             m.C2 = mat.C2;
             m.C3 = mat.C3;
-            m.C4 = 0.0f;
+            m.C4 = 0.0;
 
-            m.D1 = 0.0f;
-            m.D2 = 0.0f;
-            m.D3 = 0.0f;
-            m.D4 = 1.0f;
+            m.D1 = 0.0;
+            m.D2 = 0.0;
+            m.D3 = 0.0;
+            m.D4 = 1.0;
 
             return m;
         }
