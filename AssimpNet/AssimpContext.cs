@@ -1030,9 +1030,9 @@ namespace Assimp
             if(m_buildMatrix)
             {
                 Matrix4x4 scale = Matrix4x4.FromScaling(new Vector3D(m_scale, m_scale, m_scale));
-                Matrix4x4 xRot = Matrix4x4.FromRotationX(m_xAxisRotation * (float) (Math.PI / 180.0d));
-                Matrix4x4 yRot = Matrix4x4.FromRotationY(m_yAxisRotation * (float) (Math.PI / 180.0d));
-                Matrix4x4 zRot = Matrix4x4.FromRotationZ(m_zAxisRotation * (float) (Math.PI / 180.0d));
+                Matrix4x4 xRot = Matrix4x4.FromRotationX(m_xAxisRotation * (Math.PI / 180.0d));
+                Matrix4x4 yRot = Matrix4x4.FromRotationY(m_yAxisRotation * (Math.PI / 180.0d));
+                Matrix4x4 zRot = Matrix4x4.FromRotationZ(m_zAxisRotation * (Math.PI / 180.0d));
                 m_scaleRot = scale * ((xRot * yRot) * zRot);
             }
 

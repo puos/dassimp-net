@@ -167,7 +167,7 @@ namespace Assimp
         /// <param name="i">One-based Row index</param>
         /// <param name="j">One-based Column index</param>
         /// <returns>Matrix value</returns>
-        public float this[int i, int j]
+        public double this[int i, int j]
         {
             get
             {
@@ -634,7 +634,7 @@ namespace Assimp
         /// </summary>
         /// <param name="radians">Rotation angle in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix4x4 FromRotationX(float radians)
+        public static Matrix4x4 FromRotationX(double radians)
         {
             /*
                  |  1  0       0       0 |

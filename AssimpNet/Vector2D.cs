@@ -239,9 +239,9 @@ namespace Assimp
         /// <param name="value">Source vector</param>
         /// <param name="divisor">Divisor</param>
         /// <returns>Divided vector</returns>
-        public static Vector2D operator /(Vector2D value, float divisor)
+        public static Vector2D operator /(Vector2D value, double divisor)
         {
-            float invDivisor = 1.0 / divisor;
+            double invDivisor = 1.0 / divisor;
             Vector2D v;
             v.X = value.X * invDivisor;
             v.Y = value.Y * invDivisor;

@@ -125,7 +125,7 @@ namespace Assimp
         /// <param name="i">One-based Row index</param>
         /// <param name="j">One-based Column index</param>
         /// <returns>Matrix value</returns>
-        public float this[int i, int j]
+        public double this[int i, int j]
         {
             get
             {
@@ -339,7 +339,7 @@ namespace Assimp
         /// Compute the determinant of this matrix.
         /// </summary>
         /// <returns>The determinant</returns>
-        public float Determinant()
+        public double Determinant()
         {
             return A1 * B2 * C3 - A1 * B3 * C2 + A2 * B3 * C1 - A2 * B1 * C3 + A3 * B1 * C2 - A3 * B2 * C1;
         }
@@ -511,20 +511,20 @@ namespace Assimp
         /// <returns>Rotation matrix to rotate from the start to end.</returns>
         public static Matrix3x3 FromToMatrix(Vector3D from, Vector3D to)
         {
-            float e = Vector3D.Dot(from, to);
-            float f = (e < 0) ? -e : e;
+            double e = Vector3D.Dot(from, to);
+            double f = (e < 0) ? -e : e;
 
             Matrix3x3 m = Identity;
 
             //"from" and "to" vectors almost parallel
-            if(f > 1.0f - 0.00001f)
+            if(f > 1.0 - 0.00001)
             {
                 Vector3D u, v; //Temp variables
                 Vector3D x; //Vector almost orthogonal to "from"
 
-                x.X = (from.X > 0.0f) ? from.X : -from.X;
-                x.Y = (from.Y > 0.0f) ? from.Y : -from.Y;
-                x.Z = (from.Z > 0.0f) ? from.Z : -from.Z;
+                x.X = (from.X > 0.0) ? from.X : -from.X;
+                x.Y = (from.Y > 0.0) ? from.Y : -from.Y;
+                x.Z = (from.Z > 0.0) ? from.Z : -from.Z;
 
                 if(x.X < x.Y)
                 {
