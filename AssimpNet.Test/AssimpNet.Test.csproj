@@ -28,14 +28,11 @@
 	<!-- 최신 NUnit 패키지 사용 -->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
-		<PackageReference Include="NUnit" Version="4.2.2" />
+		<PackageReference Include="NUnit" Version="3.14.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
 	</ItemGroup>
 
 	<!-- OpenTK도 NuGet에서 가져오기 (옵션) -->
-	<ItemGroup>
-		<PackageReference Include="OpenTK" Version="3.3.3" />
-	</ItemGroup>
 
 	<!-- 또는 기존 DLL 사용하려면 아래 주석 해제하고 위 OpenTK PackageReference 제거
   <ItemGroup>
@@ -44,10 +41,6 @@
     </Reference>
   </ItemGroup>
   -->
-
-	<ItemGroup>
-		<ProjectReference Include="..\AssimpNet\AssimpNet.csproj" />
-	</ItemGroup>
 
 	<!-- 테스트 파일들 -->
 	<ItemGroup>
@@ -78,6 +71,9 @@
 		<Content Include="TestFiles\duckCM.bmp">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\AssimpNet\AssimpNet.csproj" />
 	</ItemGroup>
 
 </Project>

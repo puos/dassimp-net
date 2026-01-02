@@ -40,7 +40,7 @@
 
 	<!-- 샘플 파일들 -->
 	<ItemGroup>
-		<None Include="duck. dae">
+		<None Include="duck.dae">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<Content Include="duckCM.bmp">

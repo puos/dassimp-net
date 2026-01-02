@@ -20,6 +20,7 @@
 * THE SOFTWARE.
 */
 
+using Assimp;
 using NUnit.Framework;
 
 namespace Assimp.Test
@@ -30,7 +31,7 @@ namespace Assimp.Test
         [Test]
         public void TestIndexer()
         {
-            float r = .25f, g = .5f, b = .05f, a = 1.0f;
+            double r = .25, g = .5, b = .05, a = 1.0;
             Color4D c = new Color4D();
             c[0] = r;
             c[1] = g;
