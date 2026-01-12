@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -760,6 +760,31 @@ namespace Assimp.Configs
     }
 
     /// <summary>
+    /// Configuration for the <see cref="PostProcessSteps.FindDegenerates"/> step. If true, the area of the triangles are checked
+    /// to see if they are greater than 1e-6. If so, the triangle is removed if <see cref="RemoveDegeneratePrimitivesConfig"/> is set to true.
+    /// </summary>
+    public sealed class RemoveDegeneratePrimitivesCheckAreaConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by RemoveDegeneratePrimitivesCheckAreaConfig.
+        /// </summary>
+        public static String RemoveDegeneratePrimitivesCheckAreaConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_PP_FD_CHECKAREA;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new RemoveDegeneratePrimitivesCheckAreaConfig.
+        /// </summary>
+        /// <param name="checkArea">True if the post process step should check the area of triangles when finding degenerate primitives, false otherwise.</param>
+        public RemoveDegeneratePrimitivesCheckAreaConfig(bool checkArea)
+            : base(RemoveDegeneratePrimitivesCheckAreaConfigName, checkArea, false) { }
+    }
+
+    /// <summary>
     /// Configuration for the <see cref="PostProcessSteps.OptimizeGraph"/> step
     /// to preserve nodes matching a name in the given list. Nodes that match the names in the list
     /// will not be modified or removed. Identifiers containing whitespaces
@@ -1026,6 +1051,32 @@ namespace Assimp.Configs
     }
 
     /// <summary>
+    /// Configuration for the <see cref="PostProcessSteps.FindInvalidData"/> step. Set to true to
+    /// ignore texture coordinates. This may be useful if you have to assign different kinds of textures,
+    /// like seasonally variable ones - one for summer and one for winter. Default is false.
+    /// </summary>
+    public sealed class IgnoreTextureCoordinatesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by IgnoreTextureCoordinatesConfig.
+        /// </summary>
+        public static String IgnoreTextureCoordinatesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new IgnoreTextureCoordinatesConfig.
+        /// </summary>
+        /// <param name="ignoreTexCoords">True if texture coordinates should be ignored, false otherwise.</param>
+        public IgnoreTextureCoordinatesConfig(bool ignoreTexCoords)
+            : base(IgnoreTextureCoordinatesConfigName, ignoreTexCoords, false) { }
+    }
+
+    /// <summary>
     /// Configuration for the <see cref="PostProcessSteps.TransformUVCoords"/> step that
     /// specifies which UV transformations are to be evaluated. The default value
     /// is for all combinations (scaling, rotation, translation).
@@ -1219,6 +1270,56 @@ namespace Assimp.Configs
                 AssimpLibrary.Instance.SetImportPropertyMatrix(propStore, RootTransformationConfigName, Value);
             }
         }
+    }
+
+    /// <summary>
+    /// Configures the <see cref="PostProcessSteps.GlobalScale"/> step to scale the entire scene by a certain amount. Some importers provide a mechanism to define a scaling unit for the model,
+    /// which this processing step can utilize. Default is 1.0.
+    /// </summary>
+    /// <seealso cref="Assimp.Configs.FloatPropertyConfig" />
+    public sealed class GlobalScaleConfig : FloatPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by GlobalScaleConfig.
+        /// </summary>
+        public static String GlobalScaleConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new GlobalScaleConfig.
+        /// </summary>
+        /// <param name="globalScale">Value to scale the entire scene by.</param>
+        public GlobalScaleConfig(float globalScale)
+            : base(GlobalScaleConfigName, globalScale, 1.0f) { }
+    }
+
+    /// <summary>
+    /// Applies an application-specific scaling to the <see cref="GlobalScaleConfig"/> to allow for backwards compatibility. Default is 1.0.
+    /// </summary>
+    public sealed class AppScaleConfig : FloatPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by AppScaleConfig.
+        /// </summary>
+        public static String AppScaleConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_APP_SCALE_KEY;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new AppScaleConfig.
+        /// </summary>
+        /// <param name="appScale">Value to scale the global scale by.</param>
+        public AppScaleConfig(float appScale)
+            : base(AppScaleConfigName, appScale, 1.0f) { }
     }
 
     #endregion
@@ -1820,29 +1921,28 @@ namespace Assimp.Configs
     }
 
     /// <summary>
-    /// Specifies whether the IFC loader skips over shape representations of type 'Curve2D'. A lot of files contain both a faceted mesh representation and a outline 
-    /// with a presentation type of 'Curve2D'. Currently Assimp does not convert those, so turning this option off just clutters the log with errors.
+    /// Specifies whether the IFC loader skips over IfcSpace elements. IfcSpace elements (and their geometric representations) are used to represent free space in a building story.
     /// </summary>
-    public sealed class IFCSkipCurveShapesConfig : BooleanPropertyConfig
+    public sealed class IFCSkipSpaceRepresentationsConfig : BooleanPropertyConfig
     {
 
         /// <summary>
-        /// Gets the string name used by IFCSkipCurveShapesConfig.
+        /// Gets the string name used by IFCSkipSpaceRepresentationsConfig.
         /// </summary>
-        public static String IFCSkipCurveShapesConfigName
+        public static String IFCSkipSpaceRepresentationsConfigName
         {
             get
             {
-                return AiConfigs.AI_CONFIG_IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS;
+                return AiConfigs.AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS;
             }
         }
 
         /// <summary>
-        /// Constructs a new IFCSkipCurveShapesConfig.
+        /// Constructs a new IFCSkipSpaceRepresentationsConfig.
         /// </summary>
-        /// <param name="skipCurveShapes">True if the Curve2D shapes are skipped during import, false otherwise.</param>
-        public IFCSkipCurveShapesConfig(bool skipCurveShapes)
-            : base(IFCSkipCurveShapesConfigName, skipCurveShapes, true) { }
+        /// <param name="skipSpaceRepresentations">True if the IfcSpace elements are skipped, false if otherwise.</param>
+        public IFCSkipSpaceRepresentationsConfig(bool skipSpaceRepresentations)
+            : base(IFCSkipSpaceRepresentationsConfigName, skipSpaceRepresentations, true) { }
     }
 
     /// <summary>
@@ -1874,6 +1974,54 @@ namespace Assimp.Configs
     }
 
     /// <summary>
+    /// Specifies the tessellation conic angle for IFC smoothing curves. Accepted range of values is between [5, 120]
+    /// </summary>
+    public sealed class IFCSmoothingAngleConfig : FloatPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by IFCSmoothingAngleConfig.
+        /// </summary>
+        public static String IFCSmoothingAngleConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_IFC_SMOOTHING_ANGLE;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new IFCSmoothingAngleConfig.
+        /// </summary>
+        /// <param name="angle">Smoothing angle when tessellating curves. Needs to be in the range of [5, 120].</param>
+        public IFCSmoothingAngleConfig(float angle)
+            : base(IFCSmoothingAngleConfigName, angle, 10.0f) { }
+    }
+
+    /// <summary>
+    /// Specifies the tessellation for IFC cylindrical shapes. E.g. the number of segments used to approximate a circle. Accepted range of values is between [3, 180].
+    /// </summary>
+    public sealed class IFCCylindricalTessellationConfig : IntegerPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by IFCCylindricalTessellationConfig.
+        /// </summary>
+        public static String IFCCylindricalTessellationConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_IFC_CYLINDRICAL_TESSELLATION;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new IFCCylindricalTessellationConfig.
+        /// </summary>
+        /// <param name="tessellation">Tessellation of cylindrical shapes (e.g. the number of segments used to approximate a circle). Needs to be in the range of [3, 180].</param>
+        public IFCCylindricalTessellationConfig(int tessellation)
+            : base(IFCCylindricalTessellationConfigName, tessellation, 32) { }
+    }
+
+    /// <summary>
     /// Specifies whether the collada loader will ignore the up direction. Default is false.
     /// </summary>
     public sealed class ColladaIgnoreUpDirectionConfig : BooleanPropertyConfig
@@ -1895,6 +2043,32 @@ namespace Assimp.Configs
         /// <param name="ignoreUpDirection">True if the loader should ignore the up direction, false otherwise.</param>
         public ColladaIgnoreUpDirectionConfig(bool ignoreUpDirection)
             : base(ColladaIgnoreUpDirectionConfigName, ignoreUpDirection, false) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the Collada loader should use Collada names as node names.
+    /// If this property is set to true, the Collada names will be used as the node name. The behavior is to use the id tag (resp. sid tag, if no id tag is present) instead.
+    /// Default is false.
+    /// </summary>
+    public sealed class ColladaUseColladaNamesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by ColladaUseColladaNamesConfig.
+        /// </summary>
+        public static String ColladaUseColladaNamesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new ColladaUseColladaNamesConfig.
+        /// </summary>
+        /// <param name="useColladaNames">True if collada names should be used as node names, false otherwise.</param>
+        public ColladaUseColladaNamesConfig(bool useColladaNames)
+            : base(ColladaUseColladaNamesConfigName, useColladaNames, false) { }
     }
 
     /// <summary>
@@ -1968,6 +2142,55 @@ namespace Assimp.Configs
         /// <param name="importMaterials">True if the FBX importer should import materials, false otherwise.</param>
         public FBXImportMaterialsConfig(bool importMaterials)
             : base(FBXImportMaterialsConfigName, importMaterials, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the FBX importer will import embedded textures. Default is true.
+    /// </summary>
+    /// <seealso cref="Assimp.Configs.BooleanPropertyConfig" />
+    public sealed class FBXImportEmbeddedTexturesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXImportEmbeddedTexturesConfig.
+        /// </summary>
+        public static String FBXImportEmbeddedTexturesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_READ_TEXTURES;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXImportEmbeddedTexturesConfig.
+        /// </summary>
+        /// <param name="importTextures">True if the FBX importer should import embedded textures, false otherwise.</param>
+        public FBXImportEmbeddedTexturesConfig(bool importTextures)
+            : base(FBXImportEmbeddedTexturesConfigName, importTextures, true) { }
+    }
+
+    /// <summary>
+    /// Specifies if the FBX importer should search for embedded loaded textures, where no embedded texture data is provided. Default is false.
+    /// </summary>
+    public sealed class FBXImportEmbeddedTexturesLegacyNamingConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXImportSearchEmbeddedTexturesConfig.
+        /// </summary>
+        public static String FBXImportEmbeddedTexturesLegacyNamingConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXImportSearchEmbeddedTexturesConfig.
+        /// </summary>
+        /// <param name="searchEmbeddedTextures">True if the FBX importer should search for embedded loaded textures, where no embedded texture data is provided.</param>
+        public FBXImportEmbeddedTexturesLegacyNamingConfig(bool searchEmbeddedTextures)
+            : base(FBXImportEmbeddedTexturesLegacyNamingConfigName, searchEmbeddedTextures, false) { }
     }
 
     /// <summary>
@@ -2116,6 +2339,132 @@ namespace Assimp.Configs
         /// <param name="optimizeEmptyAnimations">True if empty animation curves should be dropped, false otherwise.</param>
         public FBXOptimizeEmptyAnimationCurvesConfig(bool optimizeEmptyAnimations)
             : base(FBXOptimizeEmptyAnimationCurvesConfigName, optimizeEmptyAnimations, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the importer shall convert the unit from centimeter (cm) to meter (m). Default value is false.
+    /// </summary>
+    public sealed class FBXConvertToMetersConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by FBXConvertToMetersConfig.
+        /// </summary>
+        public static String FBXConvertToMetersConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_FBX_CONVERT_TO_M;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new FBXConvertToMetersConfig.
+        /// </summary>
+        /// <param name="convertToMeters">True if the importer converts the unit from cm to m, false if do not do a conversion.</param>
+        public FBXConvertToMetersConfig(bool convertToMeters)
+            : base(FBXConvertToMetersConfigName, convertToMeters, false) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the importer will load multiple animations. Default value is true.
+    /// </summary>
+    public sealed class SmdLoadAnimationListConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by SmdLoadAnimationListConfig.
+        /// </summary>
+        public static String SmdLoadAnimationListConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_SMD_LOAD_ANIMATION_LIST;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new SmdLoadAnimationListConfig.
+        /// </summary>
+        /// <param name="loadAnimList">True if the importer should load multiple animations, false if only one animation should be loaded.</param>
+        public SmdLoadAnimationListConfig(bool loadAnimList)
+            : base(SmdLoadAnimationListConfigName, loadAnimList, true) { }
+    }
+
+    /// <summary>
+    /// Specifies whether the importer removes empty bones or not. Empty bones are often used to define connections for other models (e.g.
+    /// attachment points). Default value is true.
+    /// </summary>
+    public sealed class RemoveEmptyBonesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by RemoveEmptyBonesConfig.
+        /// </summary>
+        public static String RemoveEmptyBonesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new RemoveEmptyBonesConfig.
+        /// </summary>
+        /// <param name="removeEmptyBones">True if the importer should remove empty bones, false if they should be kept.</param>
+        public RemoveEmptyBonesConfig(bool removeEmptyBones)
+            : base(RemoveEmptyBonesConfigName, removeEmptyBones, true) { }
+    }
+
+    #endregion
+
+    #region Exporter Settings
+
+    /// <summary>
+    /// Specifies if the X-file exporter should use 64-bit doubles rather than 32-bit floats.
+    /// </summary>
+    public sealed class XFileUseDoublesConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by XFileUseDoublesConfig.
+        /// </summary>
+        public static String XFileUseDoublesConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_EXPORT_XFILE_64BIT;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new XFileUseDoublesConfig.
+        /// </summary>
+        /// <param name="useDoubles">True if the x file uses 64-bit double values rather than 32-bit float values.</param>
+        public XFileUseDoublesConfig(bool useDoubles)
+            : base(XFileUseDoublesConfigName, useDoubles, false) { }
+    }
+
+    /// <summary>
+    /// Specifies if the export process should disable a validation step that would remove data that does not contain faces. This will
+    /// enable point cloud data to be exported, since the 3D data is a collection of vertices without face data.
+    /// </summary>
+    public sealed class ExportPointCloudsConfig : BooleanPropertyConfig
+    {
+        /// <summary>
+        /// Gets the string name used by ExportPointCloudsConfig.
+        /// </summary>
+        public static String ExportPointCloudsConfigName
+        {
+            get
+            {
+                return AiConfigs.AI_CONFIG_EXPORT_POINT_CLOUDS;
+            }
+        }
+
+        /// <summary>
+        /// Constructs a new ExportPointCloudConfig.
+        /// </summary>
+        /// <param name="exportPointCloud">True if the exporter should treat vertices not grouped in faces as point clouds, false otherwise.</param>
+        public ExportPointCloudsConfig(bool exportPointCloud)
+            : base(ExportPointCloudsConfigName, exportPointCloud, false) { }
     }
 
     #endregion

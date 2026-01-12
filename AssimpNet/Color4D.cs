@@ -30,7 +30,6 @@ namespace Assimp
     /// Represents a Red-Green-Blue-Alpha (RGBA) color.
     /// Color values range from 0 to 1.
     /// </summary>
-    [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public struct Color4D : IEquatable<Color4D>
     {

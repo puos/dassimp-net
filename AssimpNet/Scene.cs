@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Assimp.Unmanaged;
 
 namespace Assimp
@@ -41,6 +42,8 @@ namespace Assimp
         private List<EmbeddedTexture> m_textures;
         private List<Animation> m_animations;
         private List<Material> m_materials;
+        private Metadata m_metadata;
+        private String m_name;
 
         /// <summary>
         /// Gets or sets the state of the imported scene. By default no flags are set, but
@@ -277,6 +280,33 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets the metadata of the scene. This data contains global metadata which belongs to the scene like 
+        /// unit-conversions, versions, vendors or other model-specific data. This can be used to store format-specific metadata as well.
+        /// </summary>
+        public Metadata Metadata
+        {
+            get
+            {
+                return m_metadata;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the scene.
+        /// </summary>
+        public String Name
+        {
+            get
+            {
+                return m_name;
+            }
+            set
+            {
+                m_name = value;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new instance of the <see cref="Scene"/> class.
         /// </summary>
         public Scene()
@@ -289,6 +319,18 @@ namespace Assimp
             m_textures = new List<EmbeddedTexture>();
             m_animations = new List<Animation>();
             m_materials = new List<Material>();
+            m_metadata = new Metadata();
+            m_name = String.Empty;
+        }
+
+        /// <summary>
+        /// Constructs a new instance of the <see cref="Scene"/> class.
+        /// </summary>
+        /// <param name="name">Name of the scene</param>
+        public Scene(String name)
+            : this()
+        {
+            m_name = name;
         }
 
         /// <summary>
@@ -303,6 +345,44 @@ namespace Assimp
             m_textures.Clear();
             m_animations.Clear();
             m_materials.Clear();
+            m_metadata.Clear();
+        }
+
+        /// <summary>
+        /// Gets an embedded texture by a string. The string may be a texture ID in the format of "*1" or is the
+        /// file name of the texture.
+        /// </summary>
+        /// <param name="fileName">Texture ID or original file name.</param>
+        /// <returns>Embedded texture or null if it could not be found.</returns>
+        public EmbeddedTexture GetEmbeddedTexture(String fileName)
+        {
+            if(String.IsNullOrEmpty(fileName))
+                return null;
+
+            //Lookup using texture ID (if referenced like: "*1", "*2", etc)
+            if (fileName.StartsWith("*"))
+            {
+                String indexStr = fileName.Substring(1);
+                int index;
+                if(!int.TryParse(indexStr, out index) || index < 0 || index >= m_textures.Count)
+                    return null;
+
+                return m_textures[index];
+            }
+
+            //Lookup using filename
+            String shortFileName = Path.GetFileName(fileName);
+            foreach(EmbeddedTexture tex in m_textures)
+            {
+                if(tex == null)
+                    continue;
+
+                String otherFilename = Path.GetFileName(tex.Filename);
+                if(String.Equals(shortFileName, otherFilename, StringComparison.Ordinal))
+                    return tex;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -350,10 +430,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Scene, AiScene>.IsNativeBlittable
-        {
-            get { return true; }
-        }
+        bool IMarshalable<Scene, AiScene>.IsNativeBlittable { get { return true; } }
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -370,8 +447,10 @@ namespace Assimp
             nativeValue.Cameras = IntPtr.Zero;
             nativeValue.Textures = IntPtr.Zero;
             nativeValue.Animations = IntPtr.Zero;
-            nativeValue.MetaData = IntPtr.Zero;
-            nativeValue.PrivateData = IntPtr.Zero;
+            nativeValue.Metadata = IntPtr.Zero;
+            nativeValue.Name = new AiString(m_name);
+            nativeValue.Skeletons = IntPtr.Zero;
+            nativeValue.Private = IntPtr.Zero;
 
             nativeValue.NumMaterials = (uint) MaterialCount;
             nativeValue.NumMeshes = (uint) MeshCount;
@@ -379,9 +458,10 @@ namespace Assimp
             nativeValue.NumCameras = (uint) CameraCount;
             nativeValue.NumTextures = (uint) TextureCount;
             nativeValue.NumAnimations = (uint) AnimationCount;
+            nativeValue.NumSkeletons = 0;
 
             //Write materials
-            if(nativeValue.NumMaterials > 0)
+            if (nativeValue.NumMaterials > 0)
                 nativeValue.Materials = MemoryHelper.ToNativeArray<Material, AiMaterial>(m_materials.ToArray(), true);
 
             //Write scenegraph
@@ -407,17 +487,22 @@ namespace Assimp
             //Write animations
             if(nativeValue.NumAnimations > 0)
                 nativeValue.Animations = MemoryHelper.ToNativeArray<Animation, AiAnimation>(m_animations.ToArray(), true);
+            
+            //Write metadata
+            if(m_metadata.Count > 0)
+                nativeValue.Metadata = MemoryHelper.ToNativePointer<Metadata, AiMetadata>(m_metadata);
         }
 
         /// <summary>
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<Scene, AiScene>.FromNative(ref AiScene nativeValue)
+        void IMarshalable<Scene, AiScene>.FromNative(in AiScene nativeValue)
         {
             Clear();
 
             m_flags = nativeValue.Flags;
+            m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
 
             //Read materials
             if(nativeValue.NumMaterials > 0 && nativeValue.Materials != IntPtr.Zero)
@@ -446,6 +531,16 @@ namespace Assimp
             //Read animations
             if(nativeValue.NumAnimations > 0 && nativeValue.Animations != IntPtr.Zero)
                 m_animations.AddRange(MemoryHelper.FromNativeArray<Animation, AiAnimation>(nativeValue.Animations, (int) nativeValue.NumAnimations, true));
+
+            //Read metadata
+            if(nativeValue.Metadata != IntPtr.Zero)
+            {
+                m_metadata = MemoryHelper.FromNativePointer<Metadata, AiMetadata>(nativeValue.Metadata);
+
+                // Make sure we never have a null instance
+                if(m_metadata == null)
+                    m_metadata = new Metadata();
+            }
         }
 
 
@@ -482,6 +577,9 @@ namespace Assimp
             if(aiScene.NumAnimations > 0 && aiScene.Animations != IntPtr.Zero)
                 MemoryHelper.FreeNativeArray<AiAnimation>(aiScene.Animations, (int) aiScene.NumAnimations, Animation.FreeNative, true);
 
+            if(aiScene.Metadata != IntPtr.Zero)
+                Metadata.FreeNative(aiScene.Metadata, true);
+            
             if(freeNative)
                 MemoryHelper.FreeMemory(nativeValue);
         }

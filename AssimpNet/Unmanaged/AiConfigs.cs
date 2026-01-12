@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -131,6 +131,13 @@ namespace Assimp.Unmanaged
         public const String AI_CONFIG_PP_FD_REMOVE = "PP_FD_REMOVE";
 
         /// <summary>
+        /// Configures the <see cref="PostProcessSteps.FindDegenerates"/> step
+        /// to check the area of a triangle to be greater than 1e-6. If this is not the case, the triangle will be removed if <see cref="AI_CONFIG_PP_FD_REMOVE"/> is set to true.
+        /// <para>Type: bool. Default: false</para>
+        /// </summary>
+        public const String AI_CONFIG_PP_FD_CHECKAREA = "PP_FD_CHECKAREA";
+
+        /// <summary>
         /// Configures the <see cref="PostProcessSteps.OptimizeGraph"/> step
         /// to preserve nodes matching a name in a given list. This is a list of 1 to n strings, whitespace ' ' serves as a delimter character.
         /// Identifiers containing whitespaces must be enclosed in *single* quotation marks. Carriage returns
@@ -204,6 +211,14 @@ namespace Assimp.Unmanaged
         public const String AI_CONFIG_PP_FID_ANIM_ACCURACY = "PP_FID_ANIM_ACCURACY";
 
         /// <summary>
+        /// Input parameter to the <see cref="PostProcessSteps.FindInvalidData"/> step. Set to true to
+        /// ignore texture coordinates. This may be useful if you have to assign different kinds of textures,
+        /// like seasonally variable ones - one for summer and one for winter.
+        /// <para>Type: Bool. Default: false.</para>
+        /// </summary>
+        public const String AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS = "PP_FID_IGNORE_TEXTURECOORDS";
+
+        /// <summary>
         /// Input parameter to the <see cref="PostProcessSteps.TransformUVCoords"/> step.
         /// It specifies which UV transformations are to be evaluated.
         /// <para>This is bitwise combination of the <see cref="UVTransformFlags"/> flag.</para>
@@ -231,7 +246,7 @@ namespace Assimp.Unmanaged
         /// Source UV channel for tangent space computation. The specified channel must exist or an error will be raised.
         /// <para>Type: integer. Default: 0</para>
         /// </summary>
-        public const String AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX = "AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX";
+        public const String AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX = "PP_CT_TEXTURE_CHANNEL_INDEX";
 
         /// <summary>
         /// Threshold used to determine if a bone is kept or removed during the <see cref="PostProcessSteps.Debone"/> step.
@@ -258,6 +273,19 @@ namespace Assimp.Unmanaged
         /// <para>Type: Matrix4x4. Default: Identity Matrix</para>
         /// </summary>
         public const String AI_CONFIG_PP_PTV_ROOT_TRANSFORMATION = "PP_PTV_ROOT_TRANSFORMATION";
+
+        /// <summary>
+        /// Configures the <see cref="PostProcessSteps.GlobalScale"/> step to scale the entire scene by a certain amount. Some importers provide a mechanism to define a scaling unit for the model,
+        /// which this processing step can utilize.
+        /// <para>Type: Float. Default: 1.0f.</para>
+        /// </summary>
+        public const String AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY = "GLOBAL_SCALE_FACTOR";
+
+        /// <summary>
+        /// Applies application-specific scale to the global scale factor to allow for backwards compatibility.
+        /// <para>Type: Float. Default: 1.0f.</para>
+        /// </summary>
+        public const String AI_CONFIG_APP_SCALE_KEY = "APP_SCALE_FACTOR";
 
         #endregion
 
@@ -447,11 +475,10 @@ namespace Assimp.Unmanaged
         public const String AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME = "IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME";
 
         /// <summary>
-        /// Specifies whether the IFC loader skips over shape representations of type 'Curve2D'. A lot of files contain both a faceted mesh representation and a outline 
-        /// with a presentation type of 'Curve2D'. Currently Assimp does not convert those, so turning this option off just clutters the log with errors.
+        /// Specifies whether the IFC loader skips over IfcSpace elements. IfcSpace elements (and their geometric representations) are used to represent free space in a building story.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS = "IMPORT_IFC_SKIP_CURVE_REPRESENTATIONS";
+        public const String AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS = "IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS";
 
         /// <summary>
         /// Specifies whether the IFC loader will use its own, custom triangulation algorithm to triangulate wall and floor meshes. If this is set to false,
@@ -463,10 +490,30 @@ namespace Assimp.Unmanaged
         public const String AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION = "IMPORT_IFC_CUSTOM_TRIANGULATION";
 
         /// <summary>
+        /// Specifies the tessellation conic angle for IFC smoothing curves. Accepted range of values is between [5, 120]
+        /// <para>Type: Float. Default: 10.0f</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_IFC_SMOOTHING_ANGLE = "IMPORT_IFC_SMOOTHING_ANGLE";
+
+        /// <summary>
+        /// Specifies the tessellation for IFC cylindrical shapes. E.g. the number of segments used to approximate a circle. Accepted range of values is between [3, 180].
+        /// <para>Type: Integer. Default: 32</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_IFC_CYLINDRICAL_TESSELLATION = "IMPORT_IFC_CYLINDRICAL_TESSELLATION";
+
+        /// <summary>
         /// Specifies whether the collada loader will ignore the up direction.
         /// <para>Type: Bool. Default: false</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION = "IMPORT_COLLADA_IGNORE_UP_DIRECTION";
+
+        /// <summary>
+        /// Specifies whether the Collada loader should use Collada names as node names.
+        /// If this property is set to true, the Collada names will be used as the
+        /// node name. The default is to use the id tag (resp. sid tag, if no id tag is present) instead.
+        /// <para>Type: Bool. Default: false.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES = "IMPORT_COLLADA_USE_COLLADA_NAMES";
 
         /// <summary>
         /// Specifies whether the FBX importer will merge all geometry layers present in the source file or take only the first.
@@ -486,6 +533,18 @@ namespace Assimp.Unmanaged
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_FBX_READ_MATERIALS = "IMPORT_FBX_READ_MATERIALS";
+
+        /// <summary>
+        /// Specifies whether the FBX importer will read embedded textures.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_READ_TEXTURES = "IMPORT_FBX_READ_TEXTURES";
+
+        /// <summary>
+        /// Specifies whether the fbx importer will use the legacy embedded texture naming.
+        /// <para>Type: Bool. Default: false.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING = "AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING";
 
         /// <summary>
         /// Specifies whether the FBX importer will read cameras.
@@ -526,6 +585,44 @@ namespace Assimp.Unmanaged
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
         public const String AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES = "IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES";
+
+        /// <summary>
+        /// Specifies whether the importer shall convert the unit from centimeter (cm) to meter (m).
+        /// <para>Type: Bool. Default: false.</para>
+        /// </summary>
+        public const String AI_CONFIG_FBX_CONVERT_TO_M = "AI_CONFIG_FBX_CONVERT_TO_M";
+
+        /// <summary>
+        /// Specifies whether the importer will load multiple animations.
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_SMD_LOAD_ANIMATION_LIST = "IMPORT_SMD_LOAD_ANIMATION_LIST";
+
+        /// <summary>
+        /// Specifies whether the importer removes empty bones or not. Empty bones are often used to define connections for other models (e.g.
+        /// attachment points).
+        /// <para>Type: Bool. Default: true.</para>
+        /// </summary>
+        public const String AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES = "AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES";
+
+        #endregion
+
+        #region Exporter Settings
+
+        /// <summary>
+        /// Specifies if the X-file exporter should use 64-bit doubles rather than 32-bit floats.
+        /// <para>Type: Bool. Default: false.</para>
+        /// </summary>
+        public const String AI_CONFIG_EXPORT_XFILE_64BIT = "EXPORT_XFILE_64BIT";
+        
+        /// <summary>
+        /// Specifies whether the export should be able to export point clouds. When this flag is not defined
+        /// the render data has to contain valid faces. Point  clouds are only a collection of vertices which have no spatial
+        /// organization by a face and the validation process will remove them. Enabling this feature will switch off the
+        /// flag and enable the functionality to export pure point clouds.
+        /// <para>Type: Bool. Default: false.</para>
+        /// </summary>
+        public const String AI_CONFIG_EXPORT_POINT_CLOUDS = "EXPORT_POINT_CLOUDS";
 
         #endregion
     }

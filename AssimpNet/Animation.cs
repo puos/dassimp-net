@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2013 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,34 @@ using System;
 using System.Collections.Generic;
 using Assimp.Unmanaged;
 
-namespace Assimp {
+namespace Assimp
+{
     /// <summary>
     /// An animation consists of keyframe data for a number of nodes. For
     /// each node affected by the animation, a separate series of data is given.
     /// </summary>
-    public sealed class Animation : IMarshalable<Animation, AiAnimation> {
+    public sealed class Animation : IMarshalable<Animation, AiAnimation>
+    {
         private String m_name;
         private double m_duration;
         private double m_ticksPerSecond;
         private List<NodeAnimationChannel> m_nodeChannels;
         private List<MeshAnimationChannel> m_meshChannels;
+        private List<MeshMorphAnimationChannel> m_meshMorphChannels;
 
         /// <summary>
         /// Gets or sets the name of the animation. If the modeling package the
         /// data was exported from only supports a single animation channel, this
         /// name is usually empty.
         /// </summary>
-        public String Name {
-            get {
+        public String Name
+        {
+            get
+            {
                 return m_name;
             }
-            set {
+            set
+            {
                 m_name = value;
             }
         }
@@ -53,11 +59,14 @@ namespace Assimp {
         /// <summary>
         /// Gets or sets the duration of the animation in number of ticks.
         /// </summary>
-        public double DurationInTicks {
-            get {
+        public double DurationInTicks
+        {
+            get
+            {
                 return m_duration;
             }
-            set {
+            set
+            {
                 m_duration = value;
             }
         }
@@ -66,11 +75,14 @@ namespace Assimp {
         /// Gets or sets the number of ticks per second. It may be zero
         /// if it is not specified in the imported file.
         /// </summary>
-        public double TicksPerSecond {
-            get {
+        public double TicksPerSecond
+        {
+            get
+            {
                 return m_ticksPerSecond;
             }
-            set {
+            set
+            {
                 m_ticksPerSecond = value;
             }
         }
@@ -78,8 +90,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the animation has node animation channels.
         /// </summary>
-        public bool HasNodeAnimations {
-            get {
+        public bool HasNodeAnimations
+        {
+            get
+            {
                 return m_nodeChannels.Count > 0;
             }
         }
@@ -88,8 +102,10 @@ namespace Assimp {
         /// Gets the number of node animation channels where each channel
         /// affects a single node.
         /// </summary>
-        public int NodeAnimationChannelCount {
-            get {
+        public int NodeAnimationChannelCount
+        {
+            get
+            {
                 return m_nodeChannels.Count;
             }
         }
@@ -97,8 +113,10 @@ namespace Assimp {
         /// <summary>
         /// Gets the node animation channels.
         /// </summary>
-        public List<NodeAnimationChannel> NodeAnimationChannels {
-            get {
+        public List<NodeAnimationChannel> NodeAnimationChannels
+        {
+            get
+            {
                 return m_nodeChannels;
             }
         }
@@ -106,8 +124,10 @@ namespace Assimp {
         /// <summary>
         /// Gets if the animation has mesh animations.
         /// </summary>
-        public bool HasMeshAnimations {
-            get {
+        public bool HasMeshAnimations
+        {
+            get
+            {
                 return m_meshChannels.Count > 0;
             }
         }
@@ -115,30 +135,58 @@ namespace Assimp {
         /// <summary>
         /// Gets the number of mesh animation channels.
         /// </summary>
-        public int MeshAnimationChannelCount {
-            get {
+        public int MeshAnimationChannelCount
+        {
+            get
+            {
                 return m_meshChannels.Count;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of mesh morph animation channels.
+        /// </summary>
+        public int MeshMorphAnimationChannelCount
+        {
+            get
+            {
+                return m_meshMorphChannels.Count;
             }
         }
 
         /// <summary>
         /// Gets the mesh animation channels.
         /// </summary>
-        public List<MeshAnimationChannel> MeshAnimationChannels {
-            get {
+        public List<MeshAnimationChannel> MeshAnimationChannels
+        {
+            get
+            {
                 return m_meshChannels;
+            }
+        }
+
+        /// <summary>
+        /// Gets the mesh morph animation channels.
+        /// </summary>
+        public List<MeshMorphAnimationChannel> MeshMorphAnimationChannels
+        {
+            get
+            {
+                return m_meshMorphChannels;
             }
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Animation"/> class.
         /// </summary>
-        public Animation() {
+        public Animation()
+        {
             m_name = String.Empty;
             m_duration = 0;
             m_ticksPerSecond = 0;
             m_nodeChannels = new List<NodeAnimationChannel>();
             m_meshChannels = new List<MeshAnimationChannel>();
+            m_meshMorphChannels = new List<MeshMorphAnimationChannel>();
         }
 
         #region IMarshalable Implementation
@@ -146,42 +194,46 @@ namespace Assimp {
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Animation, AiAnimation>.IsNativeBlittable {
-            get { return true; }
-        }
+        bool IMarshalable<Animation, AiAnimation>.IsNativeBlittable { get { return true; } }
 
         /// <summary>
         /// Writes the managed data to the native value.
         /// </summary>
         /// <param name="thisPtr">Optional pointer to the memory that will hold the native value.</param>
         /// <param name="nativeValue">Output native value</param>
-        void IMarshalable<Animation, AiAnimation>.ToNative(IntPtr thisPtr, out AiAnimation nativeValue) {
+        void IMarshalable<Animation, AiAnimation>.ToNative(IntPtr thisPtr, out AiAnimation nativeValue)
+        {
             nativeValue.Name = new AiString(m_name);
             nativeValue.Duration = m_duration;
             nativeValue.TicksPerSecond = m_ticksPerSecond;
             nativeValue.NumChannels = (uint) NodeAnimationChannelCount;
             nativeValue.NumMeshChannels = (uint) MeshAnimationChannelCount;
-            nativeValue.NumMorphMeshChannels = 0;
+            nativeValue.NumMeshMorphChannels = (uint) MeshMorphAnimationChannelCount;
             nativeValue.Channels = IntPtr.Zero;
             nativeValue.MeshChannels = IntPtr.Zero;
-            nativeValue.MorphMeshChannels = IntPtr.Zero;
+            nativeValue.MeshMorphChannels = IntPtr.Zero;
 
-            if (nativeValue.NumChannels > 0)
+            if(nativeValue.NumChannels > 0)
                 nativeValue.Channels = MemoryHelper.ToNativeArray<NodeAnimationChannel, AiNodeAnim>(m_nodeChannels.ToArray(), true);
 
             if(nativeValue.NumMeshChannels > 0)
                 nativeValue.MeshChannels = MemoryHelper.ToNativeArray<MeshAnimationChannel, AiMeshAnim>(m_meshChannels.ToArray(), true);
+
+            if(nativeValue.NumMeshMorphChannels > 0)
+                nativeValue.MeshMorphChannels = MemoryHelper.ToNativeArray<MeshMorphAnimationChannel, AiMeshMorphAnim>(m_meshMorphChannels.ToArray(), true);
         }
 
         /// <summary>
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<Animation, AiAnimation>.FromNative(ref AiAnimation nativeValue) {
+        void IMarshalable<Animation, AiAnimation>.FromNative(in AiAnimation nativeValue)
+        {
             m_nodeChannels.Clear();
             m_meshChannels.Clear();
+            m_meshMorphChannels.Clear();
 
-            m_name = nativeValue.Name.GetString();
+            m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
             m_duration = nativeValue.Duration;
             m_ticksPerSecond = nativeValue.TicksPerSecond;
 
@@ -190,6 +242,9 @@ namespace Assimp {
 
             if(nativeValue.NumMeshChannels > 0 && nativeValue.MeshChannels != IntPtr.Zero)
                 m_meshChannels.AddRange(MemoryHelper.FromNativeArray<MeshAnimationChannel, AiMeshAnim>(nativeValue.MeshChannels, (int) nativeValue.NumMeshChannels, true));
+
+            if(nativeValue.NumMeshMorphChannels > 0 && nativeValue.MeshMorphChannels != IntPtr.Zero)
+                m_meshMorphChannels.AddRange(MemoryHelper.FromNativeArray<MeshMorphAnimationChannel, AiMeshMorphAnim>(nativeValue.MeshMorphChannels, (int) nativeValue.NumMeshMorphChannels, true));
         }
 
 
@@ -198,7 +253,8 @@ namespace Assimp {
         /// </summary>
         /// <param name="nativeValue">Native value to free</param>
         /// <param name="freeNative">True if the unmanaged memory should be freed, false otherwise.</param>
-        public static void FreeNative(IntPtr nativeValue, bool freeNative) {
+        public static void FreeNative(IntPtr nativeValue, bool freeNative)
+        {
             if(nativeValue == IntPtr.Zero)
                 return;
 
@@ -209,6 +265,9 @@ namespace Assimp {
 
             if(aiAnimation.NumMeshChannels > 0 && aiAnimation.MeshChannels != IntPtr.Zero)
                 MemoryHelper.FreeNativeArray<AiMeshAnim>(aiAnimation.MeshChannels, (int) aiAnimation.NumMeshChannels, MeshAnimationChannel.FreeNative, true);
+
+            if(aiAnimation.NumMeshMorphChannels > 0 && aiAnimation.MeshMorphChannels != IntPtr.Zero)
+                MemoryHelper.FreeNativeArray<AiMeshMorphAnim>(aiAnimation.MeshMorphChannels, (int) aiAnimation.NumMeshMorphChannels, MeshMorphAnimationChannel.FreeNative, true);
 
             if(freeNative)
                 MemoryHelper.FreeMemory(nativeValue);

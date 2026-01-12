@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -35,12 +35,29 @@ namespace Assimp
     /// </summary>
     public sealed class MeshAnimationAttachment : IMarshalable<MeshAnimationAttachment, AiAnimMesh>
     {
+        private String m_name;
         private List<Vector3D> m_vertices;
         private List<Vector3D> m_normals;
         private List<Vector3D> m_tangents;
         private List<Vector3D> m_bitangents;
         private List<Color4D>[] m_colors;
         private List<Vector3D>[] m_texCoords;
+        private float m_weight;
+
+        /// <summary>
+        /// Gets or sets the mesh animation name.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return m_name;
+            }
+            set
+            {
+                m_name = value;
+            }
+        }
 
         /// <summary>
         /// Gets the number of vertices in this mesh. This is a replacement
@@ -201,6 +218,21 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets or sets the weight of the mesh animation.
+        /// </summary>
+        public float Weight
+        {
+            get
+            {
+                return m_weight;
+            }
+            set
+            {
+                m_weight = value;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new instance of the <see cref="MeshAnimationAttachment"/> class.
         /// </summary>
         public MeshAnimationAttachment()
@@ -209,6 +241,8 @@ namespace Assimp
             m_normals = new List<Vector3D>();
             m_tangents = new List<Vector3D>();
             m_bitangents = new List<Vector3D>();
+            m_weight = 0.0f;
+
             m_colors = new List<Color4D>[AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS];
 
             for(int i = 0; i < m_colors.Length; i++)
@@ -304,10 +338,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<MeshAnimationAttachment, AiAnimMesh>.IsNativeBlittable
-        {
-            get { return true; }
-        }
+        bool IMarshalable<MeshAnimationAttachment, AiAnimMesh>.IsNativeBlittable { get { return true; } }
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -316,6 +347,7 @@ namespace Assimp
         /// <param name="nativeValue">Output native value</param>
         void IMarshalable<MeshAnimationAttachment, AiAnimMesh>.ToNative(IntPtr thisPtr, out AiAnimMesh nativeValue)
         {
+            nativeValue.Name = new AiString(m_name);
             nativeValue.Vertices = IntPtr.Zero;
             nativeValue.Normals = IntPtr.Zero;
             nativeValue.Tangents = IntPtr.Zero;
@@ -323,6 +355,7 @@ namespace Assimp
             nativeValue.Colors = new AiMeshColorArray();
             nativeValue.TextureCoords = new AiMeshTextureCoordinateArray();
             nativeValue.NumVertices = (uint) VertexCount;
+            nativeValue.Weight = m_weight;
 
             if(VertexCount > 0)
             {
@@ -377,11 +410,14 @@ namespace Assimp
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<MeshAnimationAttachment, AiAnimMesh>.FromNative(ref AiAnimMesh nativeValue)
+        void IMarshalable<MeshAnimationAttachment, AiAnimMesh>.FromNative(in AiAnimMesh nativeValue)
         {
             ClearBuffers();
 
+            m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
+            
             int vertexCount = (int) nativeValue.NumVertices;
+            m_weight = nativeValue.Weight;
 
             if(vertexCount > 0)
             {

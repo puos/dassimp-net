@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -212,7 +212,7 @@ namespace Assimp
                 mat.D1 = -(Vector3D.Dot(xAxis, m_position));
                 mat.D2 = -(Vector3D.Dot(yAxis, m_position));
                 mat.D3 = -(Vector3D.Dot(zAxis, m_position));
-                mat.D4 = 1.0;
+                mat.D4 = 1.0f;
 
                 return mat;
             }
@@ -231,10 +231,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Camera, AiCamera>.IsNativeBlittable
-        {
-            get { return true; }
-        }
+        bool IMarshalable<Camera, AiCamera>.IsNativeBlittable { get { return true; } }
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -257,9 +254,9 @@ namespace Assimp
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<Camera, AiCamera>.FromNative(ref AiCamera nativeValue)
+        void IMarshalable<Camera, AiCamera>.FromNative(in AiCamera nativeValue)
         {
-            m_name = nativeValue.Name.GetString();
+            m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
             m_position = nativeValue.Position;
             m_direction = nativeValue.LookAt;
             m_up = nativeValue.Up;

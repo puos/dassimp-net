@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ namespace Assimp
         /// <summary>
         /// Metadata is an integer.
         /// </summary>
-        Int = 1,
+        Int32 = 1,
 
         /// <summary>
         /// Metadata is an unsigned 64-bit integer.
@@ -50,14 +50,19 @@ namespace Assimp
         Float = 3,
 
         /// <summary>
+        /// Metadata is a double.
+        /// </summary>
+        Double = 4,
+
+        /// <summary>
         /// Metadata is a string.
         /// </summary>
-        String = 4,
+        String = 5,
 
         /// <summary>
         /// Metadata is a <see cref="Vector3D"/>.
         /// </summary>
-        Vector3D = 5
+        Vector3D = 6
     }
 
     /// <summary>
@@ -66,7 +71,7 @@ namespace Assimp
     /// data or optimize the imported data.
     /// </summary>
     [Flags]
-    public enum PostProcessSteps
+    public enum PostProcessSteps : uint
     {
         /// <summary>
         /// No flags enabled.
@@ -330,6 +335,10 @@ namespace Assimp
         /// </item>
         /// </list>
         /// <para>
+        /// This step also removes very small triangles with a surface area smaller than 10^-6. If you rely on having these small triangles, or notice holes
+        /// in your model, set the property <see cref="Configs.RemoveDegeneratePrimitivesCheckAreaConfig"/> to false.
+        /// </para>
+        /// <para>
         /// Degenerated polygons are not necessarily evil and that's why they are not removed by default. There are several
         /// file formats which do not support lines or points where exporters bypass the format specification and write
         /// them as degenerated triangles instead.
@@ -452,7 +461,36 @@ namespace Assimp
         /// <para>Usage of the configuration AI_CONFIG_PP_DB_THRESHOLD to control the threshold and AI_CONFIG_PP_DB_ALL_OR_NONE if you want bones
         /// removed if and only if all bones within the scene qualify for removal.</para>
         /// </summary>
-        Debone = 0x4000000
+        Debone = 0x4000000,
+
+        /// <summary>
+        /// This step will perform a global scale of the model. Some importers provide a mechanism to define a scaling unit for the model, which this processing step can utilize.
+        /// Use AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY to setup the global scaling factor.
+        /// </summary>
+        GlobalScale = 0x8000000,
+
+        /// <summary>
+        /// A post processting step to embed textures. This will remove external data dependencies for textures. If a texture's file does not exist at the specified path (due, for instance, to
+        /// an absolute path generate on another system), it will check if a file with the same name exists at the root folder of the imported model, and if so, embeds that.
+        /// </summary>
+        EmbedTextures = 0x10000000,
+
+        /// <summary>
+        /// If the step to generate normals is set, it will not run if normals already exist. This flag will force that step to run even if normals are present.
+        /// </summary>
+        ForceGenerateNormals = 0x20000000,
+
+        /// <summary>
+        /// Drops normals for all faces of all meshes. This is ignored if no normals are present. Face normals are shared between all points of a single face,
+        /// so a single point can have multiple normals, which forces the library to duplicate vertices in some cases. <see cref="PostProcessSteps.JoinIdenticalVertices"/> is
+        /// *senseless* then. This process gives sense back to <see cref="PostProcessSteps.JoinIdenticalVertices"/>.
+        /// </summary>
+        DropNormals = 0x40000000,
+
+        /// <summary>
+        /// Generate bounding boxes for each mesh.
+        /// </summary>
+        GenerateBoundingBoxes = 0x80000000
     }
 
     /// <summary>
@@ -591,6 +629,32 @@ namespace Assimp
     }
 
     /// <summary>
+    /// Defines the methods of mesh morphing supported.
+    /// </summary>
+    public enum MeshMorphingMethod
+    {
+        /// <summary>
+        /// No morphing.
+        /// </summary>
+        None = 0x0,
+
+        /// <summary>
+        /// Interpolation between morph targets.
+        /// </summary>
+        VertexBlend = 0x1,
+
+        /// <summary>
+        /// Normalized morphing between morph targets.
+        /// </summary>
+        MorphNormalized = 0x2,
+
+        /// <summary>
+        /// Relative morphing between morph targets.
+        /// </summary>
+        MorphRelative = 0x3
+    }
+
+    /// <summary>
     /// Enumerates all supported light sources.
     /// </summary>
     public enum LightSourceType
@@ -620,21 +684,15 @@ namespace Assimp
         Spot = 0x3,
 
         /// <summary>
-        /// The generic light level of the world, including the bounces
-        /// of all other light sources.
-        /// Typically, there's at most one ambient light in a scene.
-        /// This light type doesn't have a valid position, direction, or
-        /// other properties, just a color.
+        /// Generic light level of the world, including the bounces of all other light sources. Typically, there's at most one ambient light in a scene and
+        /// is usually just a constant color. This light does not have a valid position, direction, or other properties - just the color.
         /// </summary>
         Ambient = 0x4,
 
         /// <summary>
-        /// An area light is a rectangle with predefined size that uniformly
-        /// emits light from one of its sides. The position is center of the
-        /// rectangle and direction is its normal vector.
-        /// <summary>
+        /// An area light is a rectangle with a predefined size that uniformly emits light from one of its sides. The position is center of the rectangle and the direction is its normal vector.
+        /// </summary>
         Area = 0x5
-
     }
 
     /// <summary>
@@ -894,75 +952,105 @@ namespace Assimp
         /// <summary>
         /// No texture, but the value can be used as a 'texture semantic'.
         /// </summary>
-        None = 0x0,
+        None = 0,
 
         /// <summary>
         /// A diffuse texture that is combined with the result of the diffuse lighting equation.
         /// </summary>
-        Diffuse = 0x1,
+        Diffuse = 1,
 
         /// <summary>
         /// A specular texture that is combined with the result of the specular lighting equation.
         /// </summary>
-        Specular = 0x2,
+        Specular = 2,
 
         /// <summary>
         /// An ambient texture that is combined with the ambient lighting equation.
         /// </summary>
-        Ambient = 0x3,
+        Ambient = 3,
 
         /// <summary>
         /// An emissive texture that is added to the result of the lighting calculation. It is not influenced
         /// by incoming light, instead it represents the light that the object is naturally emitting.
         /// </summary>
-        Emissive = 0x4,
+        Emissive = 4,
 
         /// <summary>
         /// A height map texture. by convention, higher gray-scale values stand for
         /// higher elevations from some base height.
         /// </summary>
-        Height = 0x5,
+        Height = 5,
 
         /// <summary>
         /// A tangent-space normal map. There are several conventions for normal maps
         /// and Assimp does (intentionally) not distinguish here.
         /// </summary>
-        Normals = 0x6,
+        Normals = 6,
 
         /// <summary>
         /// A texture that defines the glossiness of the material. This is the exponent of the specular (phong)
         /// lighting equation. Usually there is a conversion function defined to map the linear color values
         /// in the texture to a suitable exponent.
         /// </summary>
-        Shininess = 0x7,
+        Shininess = 7,
 
         /// <summary>
         /// The texture defines per-pixel opacity. usually 'white' means opaque and 'black' means 'transparency. Or quite
         /// the opposite.
         /// </summary>
-        Opacity = 0x8,
+        Opacity = 8,
 
         /// <summary>
         /// A displacement texture. The exact purpose and format is application-dependent. Higher color values stand for higher vertex displacements.
         /// </summary>
-        Displacement = 0x9,
+        Displacement = 9,
 
         /// <summary>
         /// A lightmap texture (aka Ambient occlusion). Both 'lightmaps' and dedicated 'ambient occlusion maps' are covered by this material property. The
         /// texture contains a scaling value for the final color value of a pixel. Its intensity is not affected by incoming light.
         /// </summary>
-        Lightmap = 0xA,
+        Lightmap = 10,
 
         /// <summary>
         /// A reflection texture. Contains the color of a perfect mirror reflection. This is rarely used, almost never for real-time applications.
         /// </summary>
-        Reflection = 0xB,
+        Reflection = 11,
+
+        /// <summary>
+        /// PBR texture property. Diffuse/albedo map containing base color regardless of the object surface type.
+        /// </summary>
+        BaseColor = 12,
+
+        /// <summary>
+        /// PBR texture property. This is not documented in assimp native, but is a normal map in a PBR workflow.
+        /// </summary>
+        NormalCamera = 13,
+
+        /// <summary>
+        /// PBR texture property. Emissive color map, similar to <see cref="TextureType.Emissive"/>.
+        /// </summary>
+        EmissionColor = 14,
+
+        /// <summary>
+        /// PBR texture property. Describes how reflective the object surface is.
+        /// </summary>
+        Metalness = 15,
+
+        /// <summary>
+        /// PBR texture property. Describes how rough or smooth the object surface is.
+        /// </summary>
+        Roughness = 16,
+
+        /// <summary>
+        /// Dedicated ambient occlusion map, some older formats may set this as a <see cref="TextureType.Lightmap"/> texture.
+        /// </summary>
+        AmbientOcclusion = 17,
 
         /// <summary>
         /// An unknown texture that does not mention any of the defined texture type definitions. It is still imported, but is excluded from any
         /// further postprocessing.
         /// </summary>
-        Unknown = 0xC
+        Unknown = 18
     }
 
     /// <summary>
@@ -1015,7 +1103,13 @@ namespace Assimp
         /// TER (Terragen) and HMP (3D Game Studio) are height map formats.
         /// </para>
         /// </summary>
-        Terrain = 0x10
+        Terrain = 0x10,
+
+        /// <summary>
+        /// Specifies that the scene data can be shared between structures. For example: one vertex in a few faces. This differs from <see cref="SceneFlags.NonVerboseFormat"/> as 
+        /// that has internal meanings about postprocessing steps.
+        /// </summary>
+        AllowShared = 0x20
     }
 
     /// <summary>
@@ -1097,6 +1191,11 @@ namespace Assimp
         /// Array of single-precision (32 bit) floats.
         /// </summary>
         Float = 0x1,
+
+        /// <summary>
+        /// Array of double-precision (64 bit) floats.
+        /// </summary>
+        Double = 0x2,
 
         /// <summary>
         /// Property is a string.
@@ -1201,5 +1300,39 @@ namespace Assimp
         /// Open the file for reading text data from it.
         /// </summary>
         ReadText = 5
+    }
+
+    /// <summary>
+    /// Defines flags that indicate level of support for common features for a given importer.
+    /// </summary>
+    [Flags]
+    public enum ImporterFeatureFlags
+    {
+        /// <summary>
+        /// Indicates there is a textual encoding of the file format and it is supported.
+        /// </summary>
+        SupportsText = 0x1,
+
+        /// <summary>
+        /// Indicates there is a binary encoding of the file format and it is supported.
+        /// </summary>
+        SupportsBinary = 0x2,
+
+        /// <summary>
+        /// Indicates there is a compressed encoding of the file format and it is supported.
+        /// </summary>
+        SupportsCompressed = 0x4,
+
+        /// <summary>
+        /// Indicates that the importer reads only a very particular subset of the file format. This is common
+        /// for formats that cannot easily be mapped to the Scene data structure.
+        /// </summary>
+        LimitedSupport = 0x8,
+
+        /// <summary>
+        /// Indicates that the importer is experimental and used with caution - this is only reserved for importers still in
+        /// development, and not typically yet in released production code.
+        /// </summary>
+        Experimental = 0x10
     }
 }

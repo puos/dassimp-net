@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -46,11 +46,10 @@ namespace Assimp
         private Vector3D m_position;
         private Vector3D m_direction;
         private Vector3D m_up;
-        private Vector2D m_size;
         private Color3D m_diffuse;
         private Color3D m_specular;
         private Color3D m_ambient;
-
+        private Vector2D m_areaSize;
 
         /// <summary>
         /// Gets or sets the name of the light source. This corresponds to a node present in the scenegraph.
@@ -201,7 +200,8 @@ namespace Assimp
         }
 
         /// <summary>
-        /// Gets or sets the direction up.
+        /// Gets or sets the up vector of the light source in space, relative to the transformation of the node corresponding to the light.
+        /// This is undefined for point lights.
         /// </summary>
         public Vector3D Up
         {
@@ -212,21 +212,6 @@ namespace Assimp
             set
             {
                 m_up = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets size of na Area light.
-        /// </summary>
-        public Vector2D Size
-        {
-            get
-            {
-                return m_size;
-            }
-            set
-            {
-                m_size = value;
             }
         }
 
@@ -279,11 +264,32 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets or sets the Width (X) and Height (Y) of the area that represents an <see cref="LightSourceType.Area"/> light.
+        /// </summary>
+        public Vector2D AreaSize
+        {
+            get
+            {
+                return m_areaSize;
+            }
+            set
+            {
+                m_areaSize = value;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new instance of the <see cref="Light"/> class.
         /// </summary>
         public Light()
         {
             m_lightType = LightSourceType.Undefined;
+            m_attConstant = 0.0f;
+            m_attLinear = 1.0f;
+            m_attQuadratic = 0.0f;
+            m_angleInnerCone = (float) Math.PI * 2.0f;
+            m_angleOuterCone = (float) Math.PI * 2.0f;
+            m_areaSize = new Vector2D(0.0f, 0.0f);
         }
 
         #region IMarshalable Implementation
@@ -291,10 +297,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Light, AiLight>.IsNativeBlittable
-        {
-            get { return true; }
-        }
+        bool IMarshalable<Light, AiLight>.IsNativeBlittable { get { return true; } }
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -314,18 +317,18 @@ namespace Assimp
             nativeValue.ColorDiffuse = m_diffuse;
             nativeValue.ColorSpecular = m_specular;
             nativeValue.Direction = m_direction;
-            nativeValue.Position = m_position;
             nativeValue.Up = m_up;
-            nativeValue.Size = m_size;
+            nativeValue.Position = m_position;
+            nativeValue.AreaSize = m_areaSize;
         }
 
         /// <summary>
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<Light, AiLight>.FromNative(ref AiLight nativeValue)
+        void IMarshalable<Light, AiLight>.FromNative(in AiLight nativeValue)
         {
-            m_name = nativeValue.Name.GetString();
+            m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
             m_lightType = nativeValue.Type;
             m_angleInnerCone = nativeValue.AngleInnerCone;
             m_angleOuterCone = nativeValue.AngleOuterCone;
@@ -334,11 +337,11 @@ namespace Assimp
             m_attQuadratic = nativeValue.AttenuationQuadratic;
             m_position = nativeValue.Position;
             m_direction = nativeValue.Direction;
+            m_up = nativeValue.Up;
             m_diffuse = nativeValue.ColorDiffuse;
             m_specular = nativeValue.ColorSpecular;
             m_ambient = nativeValue.ColorAmbient;
-            m_up = nativeValue.Up;
-            m_size = nativeValue.Size;
+            m_areaSize = nativeValue.AreaSize;
         }
 
         /// <summary>

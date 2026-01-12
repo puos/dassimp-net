@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,8 @@ namespace Assimp
         private int[] m_texComponentCount;
         private List<Bone> m_bones;
         private List<MeshAnimationAttachment> m_meshAttachments;
+        private MeshMorphingMethod m_morphMethod;
+        private BoundingBox m_boundingBox;
 
         /// <summary>
         /// Gets or sets the mesh name. This tends to be used
@@ -366,6 +368,36 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets or sets the morph method used when animation attachments are used.
+        /// </summary>
+        public MeshMorphingMethod MorphMethod
+        {
+            get
+            {
+                return m_morphMethod;
+            }
+            set
+            {
+                m_morphMethod = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the axis aligned bounding box that contains the extents of the mesh.
+        /// </summary>
+        public BoundingBox BoundingBox
+        {
+            get
+            {
+                return m_boundingBox;
+            }
+            set
+            {
+                m_boundingBox = value;
+            }
+        }
+
+        /// <summary>
         /// Constructs a new instance of the <see cref="Mesh"/> class.
         /// </summary>
         public Mesh() : this(String.Empty, PrimitiveType.Triangle) { }
@@ -392,6 +424,7 @@ namespace Assimp
             m_name = name;
             m_primitiveType = primType;
             m_materialIndex = 0;
+            m_morphMethod = MeshMorphingMethod.None;
 
             m_vertices = new List<Vector3D>();
             m_normals = new List<Vector3D>();
@@ -512,7 +545,6 @@ namespace Assimp
         /// array as unsigned integers (the default from Assimp, if you need them).
         /// </summary>
         /// <returns>uint index array</returns>
-        [CLSCompliant(false)]
         public uint[] GetUnsignedIndices()
         {
             if(HasFaces)
@@ -611,10 +643,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Mesh, AiMesh>.IsNativeBlittable
-        {
-            get { return true; }
-        }
+        bool IMarshalable<Mesh, AiMesh>.IsNativeBlittable { get { return true; } }
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -640,6 +669,9 @@ namespace Assimp
             nativeValue.NumBones = (uint) BoneCount;
             nativeValue.NumFaces = (uint) FaceCount;
             nativeValue.NumAnimMeshes = (uint) MeshAnimationAttachmentCount;
+            nativeValue.MorphMethod = m_morphMethod;
+            nativeValue.AABB = m_boundingBox;
+            nativeValue.TextureCoordsNames = IntPtr.Zero;
 
             if(nativeValue.NumVertices > 0)
             {
@@ -712,13 +744,16 @@ namespace Assimp
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<Mesh, AiMesh>.FromNative(ref AiMesh nativeValue)
+        void IMarshalable<Mesh, AiMesh>.FromNative(in AiMesh nativeValue)
         {
             ClearBuffers();
 
             int vertexCount = (int) nativeValue.NumVertices;
-            m_name = nativeValue.Name.GetString();
+            m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
             m_materialIndex = (int) nativeValue.MaterialIndex;
+            m_morphMethod = nativeValue.MorphMethod;
+            m_boundingBox = nativeValue.AABB;
+            m_primitiveType = nativeValue.PrimitiveTypes;       
 
             //Load Per-vertex components
             if(vertexCount > 0)

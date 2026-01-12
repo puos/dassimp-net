@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -366,6 +366,31 @@ namespace Assimp
         }
 
         /// <summary>
+        /// Gets the property raw data as a double.
+        /// </summary>
+        /// <returns>Double</returns>
+        public double GetDoubleValue()
+        {
+            if(m_type == PropertyType.Double)
+                return GetValueAs<double>();
+            
+            return 0;
+        }
+
+        /// <summary>
+        /// Sets the property raw data with a double.
+        /// </summary>
+        /// <param name="value">Double.</param>
+        /// <returns>True if successful, false otherwise.</returns>
+        public bool SetDoubleValue(double value)
+        {
+            if(m_type != PropertyType.Double)
+                return false;
+
+            return SetValueAs<double>(value);
+        }
+
+        /// <summary>
         /// Gets the property raw data as an integer.
         /// </summary>
         /// <returns>Integer</returns>
@@ -455,6 +480,34 @@ namespace Assimp
                 return false;
 
             return SetValueArrayAs<float>(values);
+        }
+
+        /// <summary>
+        /// Gets the property raw data as a double array.
+        /// </summary>
+        /// <returns>Double array</returns>
+        public double[] GetDoubleArrayValue()
+        {
+            if(m_type == PropertyType.Double)
+            {
+                int count = ByteCount / sizeof(double);
+                return GetValueArrayAs<double>(count);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Sets the property raw data as a double array.
+        /// </summary>
+        /// <param name="values">Values to set</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public bool SetDoubleArrayValue(double[] values)
+        {
+            if(m_type != PropertyType.Double)
+                return false;
+
+            return SetValueArrayAs<double>(values);
         }
 
         /// <summary>
@@ -630,9 +683,7 @@ namespace Assimp
                 m_rawValue = new byte[size];
 
             fixed(byte* ptr = m_rawValue)
-            {
                 MemoryHelper.Write<T>(new IntPtr(ptr), data, 0, data.Length);
-            }
 
             return true;
         }
@@ -646,9 +697,7 @@ namespace Assimp
                 m_rawValue = new byte[size];
 
             fixed(byte* ptr = m_rawValue)
-            {
-                MemoryHelper.Write<T>(new IntPtr(ptr), ref value);
-            }
+                MemoryHelper.Write<T>(new IntPtr(ptr), value);
 
             return true;
         }
@@ -662,10 +711,10 @@ namespace Assimp
             {
                 //String is stored as 32 bit length prefix THEN followed by zero-terminated UTF8 data (basically need to reconstruct an AiString)
                 AiString aiString;
-                aiString.Length = new UIntPtr((uint) MemoryHelper.Read<int>(new IntPtr(ptr)));
+                aiString.Length = (uint) MemoryHelper.Read<int>(new IntPtr(ptr));
 
                 //Memcpy starting at dataPtr + sizeof(int) for length + 1 (to account for null terminator)
-                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), MemoryHelper.AddIntPtr(new IntPtr(ptr), sizeof(int)), (int) aiString.Length.ToUInt32() + 1);
+                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), MemoryHelper.AddIntPtr(new IntPtr(ptr), sizeof(int)), (int) aiString.Length + 1);
 
                 return aiString.GetString();
             }
@@ -689,7 +738,7 @@ namespace Assimp
 
             fixed(byte* bytePtr = &data[0])
             {
-                MemoryHelper.Write<int>(new IntPtr(bytePtr), ref stringSize);
+                MemoryHelper.Write<int>(new IntPtr(bytePtr), stringSize);
                 byte[] utfBytes = Encoding.UTF8.GetBytes(value);
                 MemoryHelper.Write<byte>(new IntPtr(bytePtr + sizeof(int)), utfBytes, 0, utfBytes.Length);
                 //Last byte should be zero
@@ -701,6 +750,9 @@ namespace Assimp
         [Conditional("DEBUG")]
         private void AssertIsBaseName()
         {
+            if (m_name == null)
+                return;
+
             Debug.Assert(!m_name.Contains(","));
         }
 
@@ -709,10 +761,7 @@ namespace Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<MaterialProperty, AiMaterialProperty>.IsNativeBlittable
-        {
-            get { return true; }
-        }
+        bool IMarshalable<MaterialProperty, AiMaterialProperty>.IsNativeBlittable { get { return true; } }
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -739,9 +788,9 @@ namespace Assimp
         /// Reads the unmanaged data from the native value.
         /// </summary>
         /// <param name="nativeValue">Input native value</param>
-        void IMarshalable<MaterialProperty, AiMaterialProperty>.FromNative(ref AiMaterialProperty nativeValue)
+        void IMarshalable<MaterialProperty, AiMaterialProperty>.FromNative(in AiMaterialProperty nativeValue)
         {
-            m_name = nativeValue.Key.GetString();
+            m_name = AiString.GetString(nativeValue.Key); //Avoid struct copy
             m_type = nativeValue.Type;
             m_texIndex = (int) nativeValue.Index;
             m_texType = nativeValue.Semantic;

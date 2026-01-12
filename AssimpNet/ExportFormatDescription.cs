@@ -1,5 +1,5 @@
 ﻿/*
-* Copyright (c) 2012-2014 AssimpNet - Nicholas Woodfield
+* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ namespace Assimp
         private String m_fileExtension;
 
         /// <summary>
-        /// Gets a short string ID to uniquely identify the export format. E.g. "dae" or "obj".
+        /// Gets a short string ID to uniquely identify the export format. E.g. "collada" or "obj".
         /// </summary>
         public String FormatId
         {
@@ -74,7 +74,7 @@ namespace Assimp
         /// Constructs a new ExportFormatDescription.
         /// </summary>
         /// <param name="formatDesc">Unmanaged structure</param>
-        internal ExportFormatDescription(ref AiExportFormatDesc formatDesc)
+        internal ExportFormatDescription(in AiExportFormatDesc formatDesc)
         {
             m_formatId = Marshal.PtrToStringAnsi(formatDesc.FormatId);
             m_description = Marshal.PtrToStringAnsi(formatDesc.Description);
