@@ -31,7 +31,7 @@ namespace Assimp.Test
         [Test]
         public void TestIndexer()
         {
-            float x = 1, y = 2, z = 3;
+            double x = 1, y = 2, z = 3;
             Vector3D v = new Vector3D();
             v[0] = x;
             v[1] = y;
@@ -44,7 +44,10 @@ namespace Assimp.Test
         [Test]
         public void TestSet()
         {
-            float x = 10.5f, y = 109.21f, z = 100;
+            double x = 10.5;
+            double y = 109.21;
+            double  z = 100;
+            
             Vector3D v = new Vector3D();
             v.Set(x, y, z);
 
@@ -54,8 +57,12 @@ namespace Assimp.Test
         [Test]
         public void TestEquals()
         {
-            float x = 1, y = 2, z = 5;
-            float x2 = 3, y2 = 4, z2 = 10;
+            double x = 1;
+            double y = 2;
+            double z = 5;
+            double x2 = 3;
+            double y2 = 4;
+            double z2 = 10;
 
             Vector3D v1 = new Vector3D(x, y, z);
             Vector3D v2 = new Vector3D(x, y, z);
