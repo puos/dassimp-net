@@ -202,6 +202,19 @@ namespace Assimp
             AssertIsBaseName();
         }
 
+        public MaterialProperty(String baseName, double value)
+        {
+            m_name = baseName;
+            m_type = PropertyType.Double;
+            m_texIndex = 0;
+            m_texType = TextureType.None;
+            m_rawValue = null;
+
+            SetDoubleValue(value);
+            AssertIsBaseName();
+        }
+
+
         /// <summary>
         /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Constructs an integer property.
         /// </summary>
@@ -314,7 +327,7 @@ namespace Assimp
         public MaterialProperty(String baseName, Color3D value)
         {
             m_name = baseName;
-            m_type = PropertyType.Float;
+            m_type = PropertyType.Double;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
@@ -331,7 +344,7 @@ namespace Assimp
         public MaterialProperty(String baseName, Color4D value)
         {
             m_name = baseName;
-            m_type = PropertyType.Float;
+            m_type = PropertyType.Double;
             m_texIndex = 0;
             m_texType = TextureType.None;
             m_rawValue = null;
@@ -359,7 +372,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetFloatValue(float value)
         {
-            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
+            if(m_type != PropertyType.Float)
                 return false;
 
             return SetValueAs<float>(value);
@@ -545,7 +558,7 @@ namespace Assimp
         /// <returns>True if successful, otherwise false</returns>
         public bool SetIntegerArrayValue(int[] values)
         {
-            if(m_type != PropertyType.Float && m_type != PropertyType.Integer)
+            if (m_type != PropertyType.Integer)
                 return false;
 
             return SetValueArrayAs<int>(values);
@@ -576,7 +589,7 @@ namespace Assimp
         /// <returns>Color3D</returns>
         public Color3D GetColor3DValue()
         {
-            if(m_type != PropertyType.Float)
+            if(m_type != PropertyType.Double)
                 return new Color3D();
 
             return GetValueAs<Color3D>();
@@ -589,7 +602,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetColor3DValue(Color3D value)
         {
-            if(m_type != PropertyType.Float)
+            if(m_type != PropertyType.Double)
                 return false;
 
             return SetValueAs<Color3D>(value);
@@ -601,7 +614,7 @@ namespace Assimp
         /// <returns>Color4D</returns>
         public Color4D GetColor4DValue()
         {
-            if(m_type != PropertyType.Float || m_rawValue == null)
+            if(m_type != PropertyType.Double || m_rawValue == null)
                 return new Color4D();
 
             //We may have a Color that's RGB, so still read it and set alpha to 1.0
@@ -616,7 +629,7 @@ namespace Assimp
                     }
                     else if(m_rawValue.Length >= MemoryHelper.SizeOf<Color3D>())
                     {
-                        return new Color4D(MemoryHelper.Read<Color3D>(new IntPtr(ptr)), 1.0f);
+                        return new Color4D(MemoryHelper.Read<Color3D>(new IntPtr(ptr)), 1.0);
                     }
 
                 }
@@ -632,7 +645,7 @@ namespace Assimp
         /// <returns>True if successful, false otherwise</returns>
         public bool SetColor4DValue(Color4D value)
         {
-            if(m_type != PropertyType.Float)
+            if(m_type != PropertyType.Double)
                 return false;
 
             return SetValueAs<Color4D>(value);

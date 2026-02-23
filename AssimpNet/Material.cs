@@ -271,7 +271,7 @@ namespace Assimp
             {
                 MaterialProperty prop = GetProperty(AiMatKeys.OPACITY);
                 if(prop != null)
-                    return prop.GetFloatValue();
+                    return (float) prop.GetDoubleValue();
 
                 return 1.0f;
             }
@@ -311,7 +311,7 @@ namespace Assimp
             {
                 MaterialProperty prop = GetProperty(AiMatKeys.TRANSPARENCYFACTOR);
                 if(prop != null)
-                    return prop.GetFloatValue();
+                    return (float) prop.GetDoubleValue();
 
                 return 0.0f;
             }
