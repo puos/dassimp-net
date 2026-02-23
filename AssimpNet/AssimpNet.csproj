@@ -33,6 +33,7 @@
 		<Content Include="..\libs\Assimp\dAssimp.dll">
 			<Link>dAssimp.dll</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>runtimes\win-x64\native\dAssimp.dll</TargetPath>
 		</Content>
 		<Content Include="AssimpLicense.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
