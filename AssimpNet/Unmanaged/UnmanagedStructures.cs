@@ -1249,7 +1249,7 @@ namespace Assimp.Unmanaged
     /// <param name="msg">Log message</param>
     /// <param name="userData">char* pointer to user data that is passed to the callback</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void AiLogStreamCallback([In, MarshalAs(UnmanagedType.LPStr)] String msg, IntPtr userData);
+    public delegate void AiLogStreamCallback([In, MarshalAs(UnmanagedType.LPUTF8Str)] String msg, IntPtr userData);
 
     /// <summary>
     /// Callback delegate for a custom file system, to write to a file.
@@ -1306,7 +1306,7 @@ namespace Assimp.Unmanaged
     /// <param name="mode">Read-write permissions to request</param>
     /// <returns>Pointer to an AiFile instance.</returns>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate IntPtr AiFileOpenProc(IntPtr fileIO, [In, MarshalAs(UnmanagedType.LPStr)] String pathToFile, [In, MarshalAs(UnmanagedType.LPStr)] String mode);
+    public delegate IntPtr AiFileOpenProc(IntPtr fileIO, [In, MarshalAs(UnmanagedType.LPUTF8Str)] String pathToFile, [In, MarshalAs(UnmanagedType.LPStr)] String mode);
 
     /// <summary>
     /// Callback delegate for a custom file system, to close a given file and free its memory.
